@@ -19,7 +19,7 @@ export const getTotalTime = async (req: Request, res: Response) => {
       });
   
       const data = {
-        title: "Total Visit", // The title of the chart
+        title: "Available Time Budget", // The title of the chart
         color: "#FF8042", // The color for the chart (You can change it)
         dataKey: "visit", // The key for the value in chart data
         chartData, // The array of data with usernames and total time
@@ -31,6 +31,32 @@ export const getTotalTime = async (req: Request, res: Response) => {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
+  
+  
+// Route to fetch all users with populated timeBudget
+export const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.find().populate('timeBudget');
+    
+    // Log for debugging
+    console.log('Fetched Users with Time Budget:', users);
+
+    // Map users to format them as required
+    const usersData = users.map(user => ({
+      id: user._id,  // User ID (assuming ObjectId, you may want to convert it to a number or string)
+      img: "https://images.pexels.com/photos/8405873/pexels-photo-8405873.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load",  // Placeholder image (You can replace this with the actual user image URL if available)
+      username: user.username,  // User's username
+      email: user.email,  // User's email
+      amount: (user.motivation * 0.01 + user.engagement * 0.01).toFixed(3),  // Sample calculation for amount, you can adjust this logic
+    }));
+
+    return res.json(usersData);
+  } catch (error) {
+    console.error('Error fetching users with timeBudget:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 
 
 export class UserController {

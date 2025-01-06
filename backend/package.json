@@ -1,5 +1,5 @@
 {
-  "name": "finance-tracker-backend",
+  "name": "simulation-tracker-backend",
   "version": "2.0.0",
   "main": "dist/server.js",
   "scripts": {

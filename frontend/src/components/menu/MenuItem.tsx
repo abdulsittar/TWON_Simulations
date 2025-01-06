@@ -21,9 +21,10 @@ const MenuItem: React.FC<MenuItemProps> = ({
 }) => {
   return (
     <div className="w-full flex flex-col items-stretch gap-2">
-      <span className="hidden xl:block px-2 xl:text-sm 2xl:text-base 3xl:text-lg uppercase">
+    <div className="w-full">
+      <span className="px-2 xl:text-sm 2xl:text-base 3xl:text-lg uppercase">
         {catalog}
-      </span>
+      </span></div>
       {listItems.map((listItem, index) => {
         if (listItem.isLink) {
           return (

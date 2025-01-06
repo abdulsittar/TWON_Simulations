@@ -15,6 +15,17 @@ export const fetchTotalTime = async () => {
 };
 
 
+export const getAllUsers = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/getAllUsers`); 
+    return response.data;  // Return the formatted data
+  } catch (error) {
+    console.error('Error fetching total time:', error);
+    throw error;
+  }
+};
+
+
 
 // GET TOP DEALS
 export const fetchTopDeals = async () => {

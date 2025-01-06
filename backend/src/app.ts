@@ -46,6 +46,7 @@ const io = new SocketIOServer(httpServer, {
         allowedHeaders: ['Content-Type'],
         credentials: true,
       },
+      transports: ['websocket', 'polling'],
     });
 // Listen for socket events
 io.on("connection", (socket: Socket) => {

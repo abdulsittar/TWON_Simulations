@@ -12,7 +12,19 @@ export const menu = [
         isLink: true,
         url: '/',
         icon: HiOutlineHome,
-        label: 'Large Scale Simulations',
+        label: 'Simulations',
+      },
+      {
+        isLink: true,
+        url: '/',
+        icon: HiOutlineHome,
+        label: 'Ranker Settings',
+      },
+      {
+        isLink: true,
+        url: '/',
+        icon: HiOutlineHome,
+        label: 'Agents Life',
       },
     ],
   }

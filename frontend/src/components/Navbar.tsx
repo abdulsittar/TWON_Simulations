@@ -1,11 +1,8 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { HiBars3CenterLeft } from 'react-icons/hi2';
-import { DiReact } from 'react-icons/di';
-import { HiSearch, HiOutlineBell } from 'react-icons/hi';
+import { Link } from 'react-router-dom';
+import { HiBars3CenterLeft } from 'react-icons/hi2'; 
 import { RxEnterFullScreen, RxExitFullScreen } from 'react-icons/rx';
-import ChangeThemes from './ChangesThemes';
-import toast from 'react-hot-toast';
+import ChangeThemes from './ChangesThemes'; 
 import { menu } from './menu/data';
 import MenuItem from './menu/MenuItem';
 
@@ -19,8 +16,7 @@ const Navbar = () => {
   const toggleFullScreen = () => {
     setIsFullScreen((prev) => !prev);
   };
-
-  const navigate = useNavigate();
+ 
 
   React.useEffect(() => {
     if (isFullScreen) {
@@ -52,7 +48,7 @@ const Navbar = () => {
               <HiBars3CenterLeft className="text-2xl" />
             </label>
           </div>
-          <div className="drawer-side z-[99]">
+          <div className="drawer-side z-[99] pt-16">
             <label
               htmlFor="drawer-navbar-mobile"
               aria-label="close sidebar"
@@ -63,10 +59,10 @@ const Navbar = () => {
                 to={'/'}
                 className="flex items-center gap-1 xl:gap-2 mt-1 mb-5"
               >
-                <DiReact className="text-3xl sm:text-4xl xl:text-4xl 2xl:text-6xl text-primary animate-spin-slow" />
-                <span className="text-[16px] leading-[1.2] sm:text-lg xl:text-xl 2xl:text-2xl font-semibold text-base-content dark:text-neutral-200">
-                  React Dashboard
-                </span>
+              <div>
+  <img src="/TWON_Logo.png"  alt="TWON Logo"    className="w-8 h-8 sm:w-10 sm:h-10 xl:w-12 xl:h-12 2xl:w-16 2xl:h-16 animate-spin-slow"
+  />
+</div> <span className="text-[16px] leading-[1.2] sm:text-lg xl:text-xl 2xl:text-2xl font-semibold text-base-content dark:text-neutral-200">  TWON Simulations  </span>
               </Link>
               {menu.map((item, index) => (
                 <MenuItem
@@ -81,17 +77,15 @@ const Navbar = () => {
         </div>
 
         {/* navbar logo */}
-        <Link to={'/'} className="flex items-center gap-1 xl:gap-2">
-          <DiReact className="text-3xl sm:text-4xl xl:text-4xl 2xl:text-6xl text-primary animate-spin-slow" />
-          <span className="text-[16px] leading-[1.2] sm:text-lg xl:text-xl 2xl:text-2xl font-semibold text-base-content dark:text-neutral-200">
-            React Dashboard
-          </span>
-        </Link>
+        <div className="flex items-center gap-1">
+   
+  <span className="text-[16px] leading-[1.2] sm:text-lg xl:text-xl 2xl:text-2xl font-semibold text-base-content dark:text-neutral-200">Simulations</span>
+</div>
       </div>
 
       {/* navbar items to right */}
       <div className="flex items-center gap-0 xl:gap-1 2xl:gap-2 3xl:gap-5">
-        {/* search */}
+        {/* search 
         <button
           onClick={() =>
             toast('Gaboleh cari!', {
@@ -101,7 +95,7 @@ const Navbar = () => {
           className="hidden sm:inline-flex btn btn-circle btn-ghost"
         >
           <HiSearch className="text-xl 2xl:text-2xl 3xl:text-3xl" />
-        </button>
+        </button>*/}
 
         {/* fullscreen */}
         <button
@@ -115,7 +109,7 @@ const Navbar = () => {
           )}
         </button>
 
-        {/* notification */}
+        {/* notification 
         <button
           onClick={() =>
             toast('Gaada notif!', {
@@ -125,14 +119,14 @@ const Navbar = () => {
           className="px-0 xl:px-auto btn btn-circle btn-ghost"
         >
           <HiOutlineBell className="text-xl 2xl:text-2xl 3xl:text-3xl" />
-        </button>
+        </button>*/}
 
         {/* theme */}
         <div className="px-0 xl:px-auto btn btn-circle btn-ghost xl:mr-1">
           <ChangeThemes />
         </div>
 
-        {/* avatar dropdown */}
+        {/* avatar dropdown 
         <div className="dropdown dropdown-end">
           <div
             tabIndex={0}
@@ -159,7 +153,7 @@ const Navbar = () => {
               <a>Log Out</a>
             </li>
           </ul>
-        </div>
+        </div>*/}
       </div>
     </div>
   );

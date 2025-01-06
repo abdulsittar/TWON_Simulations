@@ -9,7 +9,7 @@ services:
     depends_on:
       - mongodb
     networks:
-      - finance-net
+      - simulation-net
 
   frontend:
     build:
@@ -19,7 +19,7 @@ services:
     depends_on:
       - backend
     networks:
-      - finance-net
+      - simulation-net
 
   mongodb:
     image: mongo:latest
@@ -28,11 +28,11 @@ services:
     volumes:
       - mongodb-data:/data/db
     networks:
-      - finance-net
+      - simulation-net
 
 volumes:
   mongodb-data:
 
 networks:
-  finance-net:
+  simulation-net:
     driver: bridge

@@ -1,15 +1,15 @@
-// import React from 'react'
-import toast from 'react-hot-toast';
+// import React from 'react' 
 // import { topDealUsers } from './data';
 import { useQuery } from '@tanstack/react-query';
-import { fetchTopDeals } from '../../api/ApiCollection';
+import { getAllUsers } from '../../api/ApiCollection'; 
 
 interface topDealsUser {
-  id: number;
-  img: string;
   username: string;
+  name: string;
   email: string;
-  amount: string;
+  motivation: number;
+  engagement: number; // Engagement level of the user
+  success: number; // Success level of the user
 }
 
 const TopDealsBox = () => {
@@ -17,13 +17,13 @@ const TopDealsBox = () => {
 
   const { isLoading, isSuccess, data } = useQuery({
     queryKey: ['topdeals'],
-    queryFn: fetchTopDeals,
+    queryFn: getAllUsers,
   });
 
   return (
     <div className="w-full p-0 m-0 flex flex-col items-stretch gap-6 xl:gap-4 2xl:gap-9">
       <span className="text-2xl xl:text-2xl 2xl:text-4xl font-bold">
-        Top Deals
+        Agents
       </span>
       <div className="w-full flex flex-col items-stretch gap-3">
         {isLoading &&
@@ -44,15 +44,14 @@ const TopDealsBox = () => {
           ))}
         {isSuccess &&
           data.map((user: topDealsUser, index: number) => (
-            <button
-              onClick={() => toast('Gabisa!', { icon: '😠' })}
+            <button 
               key={index}
               className="w-full flex justify-between items-center h-auto btn btn-ghost px-1 py-2"
             >
               <div className="flex gap-3 2xl:gap-4 items-center">
                 <div className="avatar">
                   <div className="w-11 xl:w-8 2xl:w-16 3xl:w-20 rounded-full">
-                    <img src={user.img} alt={`user${index}`} />
+                    <img src={""} alt={`user${index}`} />
                   </div>
                 </div>
                 <div className="flex flex-col items-start gap-1">
@@ -65,7 +64,7 @@ const TopDealsBox = () => {
                 </div>
               </div>
               <span className="font-semibold text-lg xl:text-base 2xl:text-lg 3xl:text-xl">
-                $3.688
+                0231
               </span>
             </button>
           ))}
