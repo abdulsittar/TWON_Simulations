@@ -1,14 +1,14 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document } from 'mongoose';
 
-// TimeBudget Schema
 export interface ITimeBudget extends Document {
-  totalTime: number; // Total time available for the user
-  replenishRate: number; // Rate at which time is replenished (e.g., per hour)
+  totalTime: number;
+  replenishRate?: number; // Optional field
+  usedTime: number;
 }
 
 const TimeBudgetSchema: Schema = new Schema({
   totalTime: { type: Number, required: true },
-  replenishRate: { type: Number, required: true },
+  replenishRate: { type: Number, required: false },
   usedTime: { type: Number, default: 0 },
 });
 

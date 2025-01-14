@@ -14,11 +14,11 @@ export interface IUser extends Document {
 
 const UserSchema: Schema = new Schema({
   username: { type: String, required: true },
-  name: { type: String, required: true },
+  name: { type: String, required: false },
   email: { type: String, required: true, unique: true },
   motivation: { type: Number, required: true },
   engagement: { type: Number, required: true },
-  success: { type: Number, required: true },
+  success: { type: Number, required: false },
   timeBudget: { type: Schema.Types.ObjectId, ref: "TimeBudget", required: true }, // Reference to TimeBudget
 });
 

@@ -64,18 +64,37 @@ export class UserController {
   static async createUser(req: Request, res: Response) {
     try {
       // Create a time budget first
+      
+      console.log(req.body)
+      if (!req.body.timeBudget) {
+        return res.status(400).json({ error: "Time budget is required" });
+      }
+      
       const timeBudget = new TimeBudget(req.body.timeBudget);
+      try {
+      
       const savedTimeBudget = await timeBudget.save();
-
-      // Create a new user
+      console.log(savedTimeBudget)
+      console.log("Saved Time Budget:", savedTimeBudget);
       const user = new User({
         ...req.body,
         timeBudget: savedTimeBudget._id, // Reference the TimeBudget
       });
 
       const savedUser = await user.save();
+      console.log("User saved")
       res.status(201).json(savedUser);
+       
     } catch (error) {
+      console.error("Error saving TimeBudget:", error);  // Log the actual error 
+    }
+      
+      
+      
+      // Create a new user
+      
+    } catch (error) {
+      console.log(error)
       res.status(400).json({ error: "Error creating user" });
     }
   }

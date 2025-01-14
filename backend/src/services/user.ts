@@ -1,4 +1,4 @@
-import { User } from "../models/user.model";
+import { User } from "../models/user/user.model";
 import { activation } from "../utils/activation";
 
 export const calculateActivation = async (userId: string): Promise<number> => {

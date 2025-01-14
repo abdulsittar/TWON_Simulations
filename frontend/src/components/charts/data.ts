@@ -76,7 +76,7 @@ export const totalRatio = {
 };
 
 export const totalVisit = {
-  title: 'Total Visit',
+  title: 'Total Posts',
   color: '#FF8042',
   dataKey: 'visit',
   chartData: [

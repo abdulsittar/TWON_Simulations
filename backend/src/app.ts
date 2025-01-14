@@ -8,9 +8,13 @@ import helmet from 'helmet';
 import cors from "cors";
 import { Manager } from "./services/manager";
 import usersRoute from './routes/userRoutes';
+import networkRoutes from "./routes/networkRoutes";
+import connectDB from "./config/db";
+
 
 // Import controllers and routes if applicable
-import { UserController } from "./controllers/user.controller";
+import { UserController } from "./controllers/userController";
+import { NetworkController } from "./controllers/networkController";
 import { PostController } from "./controllers/post.controller";
 
 require('dotenv').config();
@@ -74,21 +78,26 @@ io.on("connection", (socket: Socket) => {
   });
 });
 
+
+connectDB();
+
 // Periodically calculate time budgets and ask the user with the highest budget to create a post
-setInterval(async () => {
+/*setInterval(async () => {
     try {
       await manager.calculateTimeBudgetForAllUsers();
       await manager.askUserWithHighestTimeBudgetToCreatePost();
     } catch (error) {
       console.error("Error in manager execution:", error);
     }
-  }, 10000); // Every 10 seconds (adjust as needed)
+  }, 10000); // Every 10 seconds (adjust as needed)*/
+
+
 
 // Define API routes (example for User and Post)
-app.post("/api/users", UserController.createUser);
-app.put("/api/users/:id", UserController.updateUser);
-app.use("/api", usersRoute);
-app.post("/api/posts", PostController.createPost);
+app.post("/users/create", UserController.createUser);
+//app.put("/users/:id", UserController.updateUser);
+app.post("/network/create", NetworkController.createNetwork);
+//app.post("/api/posts", PostController.createPost);
 
 
 export default httpServer;

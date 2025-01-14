@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { IPost } from "./post.model";
+import { IPost } from "../content/post.model";
 
 export interface IFeed extends Document {
   options: string[]; // Feed options like 'Random', 'Chronological'

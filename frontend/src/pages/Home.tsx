@@ -203,7 +203,7 @@ const Home = () => {
         <div className="box col-span-full sm:col-span-1 xl:col-span-1 3xl:row-span-2">
           <ChartBox
             chartType={'bar'}
-            title="Total Visit"
+            title="Total Posts"
             {...queryGetTotalVisit.data}
             isLoading={queryGetTotalVisit.isLoading}
             isSuccess={queryGetTotalVisit.isSuccess}
@@ -214,7 +214,7 @@ const Home = () => {
         <div className="box col-span-full sm:col-span-1 xl:col-span-1 3xl:row-span-2">
           <ChartBox
             chartType={'bar'}
-            title="Total Profit"
+            title="Total Likes"
             {...queryGetTotalProfit.data}
             isLoading={queryGetTotalProfit.isLoading}
             isSuccess={queryGetTotalProfit.isSuccess}

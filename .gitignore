@@ -4,7 +4,11 @@
 /Schedular/CaseStudy/
 /node_modules
 .env
+/backend/tests
+backend/tests
 /.env
+/backend/.env
+/frontend/.env
 Twon-Simulations/.env
 node_modules
 networks.log

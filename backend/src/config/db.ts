@@ -25,7 +25,7 @@ const connectDB = async () => {
       }
   
       // Call deleteAllData first
-      await deleteAllData();
+      //await deleteAllData();
   
       // Function to create dummy data
       async function createDummyData() {
@@ -96,7 +96,7 @@ const connectDB = async () => {
       }
   
       // Call createDummyData after data deletion
-      await createDummyData();
+      //await createDummyData();
   
     } catch (err) {
       console.error(err);
