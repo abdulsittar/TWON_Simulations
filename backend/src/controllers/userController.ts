@@ -89,8 +89,6 @@ export class UserController {
       console.error("Error saving TimeBudget:", error);  // Log the actual error 
     }
       
-      
-      
       // Create a new user
       
     } catch (error) {
