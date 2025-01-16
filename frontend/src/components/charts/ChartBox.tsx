@@ -62,6 +62,7 @@ const ChartBox: React.FC<ChartBoxProps> = ({
     if (isLoading) {
       return (
         <div className="w-full h-full flex justify-between items-end xl:gap-5">
+        
           <div className="flex h-full flex-col justify-between items-start">
             <div className="flex items-center gap-2">
               {IconBox && (
@@ -85,6 +86,7 @@ const ChartBox: React.FC<ChartBoxProps> = ({
     if (isSuccess) {
       return (
         <div className="w-full h-full flex justify-between items-end xl:gap-5">
+        
           <div className="flex h-full flex-col justify-between items-start">
             <div className="flex items-center gap-2">
               {IconBox && (
@@ -199,7 +201,14 @@ const ChartBox: React.FC<ChartBoxProps> = ({
       );
     }
 
-    return null;
+    return (
+      <div className="w-full h-full p-0 m-0 flex flex-col items-start gap-3 xl:gap-4">
+        <span className="text-2xl xl:text-2xl 2xl:text-4xl font-bold">
+          {title || 'No title'}
+        </span>
+        <div className="w-full min-h-40 xl:min-h-[150px] skeleton"></div>
+      </div>
+    );
   }
 
   if (chartType === 'pie') {

@@ -1,6 +1,6 @@
 // import toast from 'react-hot-toast';
 import {
-  HiOutlineHome, 
+  HiOutlineHome,HiArrowTrendingUp, HiMiniWrenchScrewdriver , HiCalculator , HiChatBubbleLeftEllipsis 
 } from 'react-icons/hi2';
 // import { IoSettingsOutline } from 'react-icons/io5';
 
@@ -11,20 +11,26 @@ export const menu = [
       {
         isLink: true,
         url: '/',
-        icon: HiOutlineHome,
+        icon: HiArrowTrendingUp ,
         label: 'Simulations',
       },
       {
         isLink: true,
         url: '/',
-        icon: HiOutlineHome,
+        icon: HiMiniWrenchScrewdriver ,
         label: 'Ranker Settings',
       },
       {
         isLink: true,
         url: '/',
-        icon: HiOutlineHome,
+        icon: HiCalculator ,
         label: 'Agents Life',
+      },
+      {
+        isLink: true,
+        url: '/',
+        icon: HiChatBubbleLeftEllipsis ,
+        label: 'Data',
       },
     ],
   }

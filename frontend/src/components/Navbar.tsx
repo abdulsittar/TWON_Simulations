@@ -79,7 +79,8 @@ const Navbar = () => {
         {/* navbar logo */}
         <div className="flex items-center gap-1">
    
-  <span className="text-[16px] leading-[1.2] sm:text-lg xl:text-xl 2xl:text-2xl font-semibold text-base-content dark:text-neutral-200">Simulations</span>
+  <span className="text-[16px] leading-[1.2] sm:text-lg xl:text-xl 2xl:text-2xl font-semibold text-base-content dark:text-neutral-200">
+  <h2 className="text-3xl font-semibold mb-4">TWON - Large Scale Simulations</h2></span>
 </div>
       </div>
 

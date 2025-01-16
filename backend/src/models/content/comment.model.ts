@@ -1,18 +1,55 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { IPost } from "./post.model";
-import { IUser } from "../user/user.model";
+import { IUser } from "../user/user.model"; // Assuming you have a User model interface
+import { IPost } from "../content/post.model"; // Assuming you have a Post model interface
+import { ICommentLike } from "../content/commentLike.model"; // Assuming you have a CommentLike model interface
+import { ICommentDislike } from "../content/commentDislike.model"; // Assuming you have a CommentDislike model interface
 
 // Comment Interface
 export interface IComment extends Document {
-  content: string; // Content of the comment
-  createdBy: IUser["_id"]; // Reference to the user who created the comment
-  post: IPost["_id"]; // Reference to the post being commented on
+  body: string;
+  userId: IUser["_id"];
+  username: string;
+  likes: ICommentLike["_id"][];
+  dislikes: ICommentDislike["_id"][];
+  postId: IPost["_id"];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-const CommentSchema: Schema = new Schema({
-  content: { type: String, required: true },
-  createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true }, // Reference to User model
-  post: { type: Schema.Types.ObjectId, ref: "Post", required: true }, // Reference to Post model
-});
+const CommentSchema: Schema = new Schema(
+  {
+    body: {
+      type: String,
+      required: true,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    username: {
+      type: String,
+      required: true,
+    },
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "CommentLike",
+      },
+    ],
+    dislikes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "CommentDislike",
+      },
+    ],
+    postId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
+      required: true,
+    },
+  },
+  { timestamps: true } // Automatically adds createdAt and updatedAt fields
+);
 
 export const Comment = mongoose.model<IComment>("Comment", CommentSchema);

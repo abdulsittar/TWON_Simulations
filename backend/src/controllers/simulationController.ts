@@ -1,147 +1,22 @@
+// src/controllers/simulationController.ts
+
 import { Request, Response } from "express";
-import { getRandomInt, agentGeneratePostLoop, agentLikePostLoop, agentLikeCommentLoop, agentReplyCommentLoop, add_A_Post, add_As_Read, add_A_Comment, getFollowingsAndFollowers, like_A_Comment, dislike_A_Comment, like_A_Post, dislike_A_Post, getInteractionsAgentOnPosts, getInteractionsAgentOnComments, addslashes, getThreadAgentOnComments, delayedFunction, delay } from "../utils";
-import { User } from "../models/user/user.model";  // Assuming you have a User model for agent-related data
-import { Post } from "../models/post";  // Assuming Post model is imported
-import { responseLogger } from "../utils/logger"; // Assuming logger utility
-import { Comment } from "../models/comment";  // Assuming Comment model is imported
-import { CommentLike } from "../models/commentLike";  // Assuming CommentLike model is imported
-import { ObjectId } from "mongodb";  // Import ObjectId for MongoDB 
+import { SimulationService } from "../services/simulation";
 
-// Define types for better type safety
-interface Agent {
-  _id: string;
-  name: string;
-  followings: string[];
-  followers: string[];
-  posts: string[];
-  comments: string[];
-  // Add other properties relevant to your agent here
-}
-
-export class SchedulerController {
-  // Run the Scheduler and execute actions on random agents
-  static async runAction(req: Request, res: Response) {
+export class SimulationController {
+  static async startSimulation(req: Request, res: Response): Promise<Response> {
     try {
-      const num_of_loops = 10; // Number of loops for running actions, adjust as needed
-
-      // Fetch all agents from the database
-      const agents: Agent[] = await User.find({}); 
-
-      if (!agents.length) {
-        return res.status(404).json({ message: "No agents found." });
-      }
-
-      for (let i = 0; i < num_of_loops; i++) {
-        const randomIndex = getRandomInt(0, agents.length - 1);
-        const randomAgent = agents[randomIndex];
-
-        const randAct = getRandomInt(0, 3); // Random action selection
-        responseLogger.log(`Action ${i}!`);
-        responseLogger.log(`Random Action ${randAct}!`);
-        responseLogger.log(`Random Agent: ${JSON.stringify(randomAgent)}!`);
-
-        switch (randAct) {
-          case 0:
-            await agentGeneratePostLoop(randomAgent); // Generate a post
-            // Optionally, you can call more functions like agent_Like_Post_Loop here
-            break;
-
-          case 1:
-            await agentGeneratePostLoop(randomAgent); // Generate a post
-            // Optionally, you can call agent_Like_Comment_Loop here
-            break;
-
-          case 2:
-            await agentGeneratePostLoop(randomAgent); // Generate a post
-            // Optionally, you can call agent_Reply_Comment_Loop here
-            break;
-
-          case 3:
-            responseLogger.log(randomAgent);
-            await agentGeneratePostLoop(randomAgent); // Generate a post
-            break;
-
-          default:
-            responseLogger.log("Invalid action choice.");
-            break;
-        }
-
-        // Add additional functions you want to execute as part of each loop
-        await delayedFunction(500);  // Example delay (500ms delay between actions)
-
-        // Example of additional actions you could include here
-        // These can be customized as per your use case
-
-        // Adding a post
-        await add_A_Post(randomAgent);
-
-        // Mark a post as read
-        await add_As_Read(randomAgent);
-
-        // Adding a comment to a post
-        await add_A_Comment(randomAgent);
-
-        // Fetching followings and followers
-        await getFollowingsAndFollowers(randomAgent);
-
-        // Liking a comment
-        await like_A_Comment(randomAgent);
-
-        // Disliking a comment
-        await dislike_A_Comment(randomAgent);
-
-        // Liking a post
-        await like_A_Post(randomAgent);
-
-        // Disliking a post
-        await dislike_A_Post(randomAgent);
-
-        // Fetching interactions on posts
-        await getInteractionsAgentOnPosts(randomAgent);
-
-        // Fetching interactions on comments
-        await getInteractionsAgentOnComments(randomAgent);
-
-        // Processing threaded comments
-        await getThreadAgentOnComments(randomAgent);
-
-      }
-
-      return res.status(200).json({ message: "Scheduler actions completed successfully." });
-    } catch (error: unknown) {
-      console.error("Scheduler Error:", error);
-
-      if (error instanceof Error) {
-        return res.status(500).json({ message: "Scheduler Error", error: error.message });
-      } else {
-        return res.status(500).json({ message: "Scheduler Error", error: "An unknown error occurred" });
-      }
+      await SimulationService.runSimulation();
+      return res.status(200).json({ message: "Simulation completed successfully." });
+    } catch (error) {
+      console.error("Error running simulation:", error);
+      return res.status(500).json({ message: "Failed to run simulation", error: error });
     }
   }
-  
-  // Initialize the scheduler (e.g., connecting to the database and running the scheduler process)
-  static async initializeScheduler(req: Request, res: Response) {
-    try {
-      await connectDB();  // Assuming this connects to MongoDB using your utility
-
-      console.log('MongoDB connected successfully');
-      responseLogger.log(`Number of agents: ${agents.length}`);
-      responseLogger.log(`List of agents: ${JSON.stringify(agents)}`);
-
-      // Run the scheduler directly or set it to run at intervals
-      await this.runAction(req, res); // Running the scheduler actions once
-
-      responseLogger.log(`Scheduler app listening on port ${process.env.network_port}!`);
-
-      return res.status(200).json({ message: 'Scheduler initialized and actions completed.' });
-    } catch (err) {
-      console.error('Failed to connect to MongoDB:', err);
-      return res.status(500).json({ message: 'Failed to initialize scheduler', error: err.message });
-    }
-  }
-  
 }
 
+
+/*
  function add_A_Post(txt: string, userId: string) {
     if (txt.length > 0) {
       const post = new Post({
@@ -736,7 +611,7 @@ export class SchedulerController {
       responseLogger.log("Error in agent_Generate_Post_Loop:", err);
     }
   }
-  
+  */
   
   
   

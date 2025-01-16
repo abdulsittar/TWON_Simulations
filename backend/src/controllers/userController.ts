@@ -1,98 +1,60 @@
 import { Request, Response } from "express";
 import { User } from "../models/user/user.model";
-import { TimeBudget } from "../models/user/timeBudget.model";
-
-
-// Route to fetch total time for each user
-export const getTotalTime = async (req: Request, res: Response) => { 
-    try {
-      const users = await User.find().populate('timeBudget'); // Populating timeBudget to get its details
-      console.error('No fetching total time:', users);
-      const chartData = users.map(user => {
-        const timeBudget = user.timeBudget;
-        const availableTime = timeBudget.totalTime - timeBudget.usedTime; // Total time available (after usedTime)
-        
-        return {
-          name: user.username, // Assuming you want the username as the name
-          visit: availableTime, // Using the available time as the visit count
-        };
-      });
-  
-      const data = {
-        title: "Available Time Budget", // The title of the chart
-        color: "#FF8042", // The color for the chart (You can change it)
-        dataKey: "visit", // The key for the value in chart data
-        chartData, // The array of data with usernames and total time
-      };
-  
-      return res.json(data);
-    } catch (error) {
-      console.error('Easdf asd fa dsdftotal time:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  }
-  
-  
-// Route to fetch all users with populated timeBudget
-export const getAllUsers = async (req: Request, res: Response) => {
-  try {
-    const users = await User.find().populate('timeBudget');
-    
-    // Log for debugging
-    console.log('Fetched Users with Time Budget:', users);
-
-    // Map users to format them as required
-    const usersData = users.map(user => ({
-      id: user._id,  // User ID (assuming ObjectId, you may want to convert it to a number or string)
-      img: "https://images.pexels.com/photos/8405873/pexels-photo-8405873.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load",  // Placeholder image (You can replace this with the actual user image URL if available)
-      username: user.username,  // User's username
-      email: user.email,  // User's email
-      amount: (user.motivation * 0.01 + user.engagement * 0.01).toFixed(3),  // Sample calculation for amount, you can adjust this logic
-    }));
-
-    return res.json(usersData);
-  } catch (error) {
-    console.error('Error fetching users with timeBudget:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-
-
+import { TimeBudget } from "../models/user/timeBudget.model"; // Assuming TimeBudget model exists
+import { AMCDOpinionModel } from "../models/user/opinion.model";
+import { SimpleLogger } from "../models/user/logger.model";
+import { DefaultActor } from "../models/user/actor.model";
 
 export class UserController {
   // Create a new user
   static async createUser(req: Request, res: Response) {
     try {
-      // Create a time budget first
-      
-      console.log(req.body)
+      console.log(req.body);
+
+      // Check if timeBudget is provided
       if (!req.body.timeBudget) {
         return res.status(400).json({ error: "Time budget is required" });
       }
-      
+
+      // Create and save the time budget
       const timeBudget = new TimeBudget(req.body.timeBudget);
       try {
-      
-      const savedTimeBudget = await timeBudget.save();
-      console.log(savedTimeBudget)
-      console.log("Saved Time Budget:", savedTimeBudget);
-      const user = new User({
-        ...req.body,
-        timeBudget: savedTimeBudget._id, // Reference the TimeBudget
-      });
+        const savedTimeBudget = await timeBudget.save();
+        console.log("Saved Time Budget:", savedTimeBudget);
 
-      const savedUser = await user.save();
-      console.log("User saved")
-      res.status(201).json(savedUser);
-       
+        // Initialize the agent-like properties
+        const opinionModel = new AMCDOpinionModel({
+          politics: 0,
+          sports: 0,
+          technology: 0, // Default opinions for example topics
+        });
+
+        const logger = new SimpleLogger();
+        const actor = new DefaultActor();
+
+        // Create the new user (agent) with all properties, including opinionModel, logger, actor
+        const user = new User({
+          ...req.body,
+          timeBudget: savedTimeBudget._id, // Reference to the saved TimeBudget
+          opinionModel,  // Add the opinionModel for the agent's opinions
+          logger,        // Add the logger for the agent's actions
+          actor,         // Add the actor defining how the agent behaves
+          frustration: Math.floor(Math.random() * 50), // Default frustration level
+          biases:{ politics: Math.random() },     // Default empty biases
+          timeBudgetRemaining: req.body.timeBudget.totalTime - req.body.timeBudget.usedTime, // Remaining time budget
+        });
+
+        // Save the user to the database
+        const savedUser = await user.save();
+        console.log("User saved:", savedUser);
+
+        res.status(201).json(savedUser); // Return the created user in response
+      } catch (error) {
+        console.error("Error saving TimeBudget:", error);
+        res.status(400).json({ error: "Error saving time budget" });
+      }
     } catch (error) {
-      console.error("Error saving TimeBudget:", error);  // Log the actual error 
-    }
-      
-      // Create a new user
-      
-    } catch (error) {
-      console.log(error)
+      console.error("Error creating user:", error);
       res.status(400).json({ error: "Error creating user" });
     }
   }
@@ -108,7 +70,7 @@ export class UserController {
         await TimeBudget.findByIdAndUpdate(user.timeBudget, req.body.timeBudget);
       }
 
-      // Update User
+      // Update User (including any other properties)
       const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
       res.status(200).json(updatedUser);
     } catch (error) {

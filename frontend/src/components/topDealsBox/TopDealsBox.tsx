@@ -1,7 +1,7 @@
 // import React from 'react' 
 // import { topDealUsers } from './data';
 import { useQuery } from '@tanstack/react-query';
-import { getAllUsers } from '../../api/ApiCollection'; 
+import { getAllUsers, fetchTopDeals } from '../../api/ApiCollection'; 
 
 interface topDealsUser {
   username: string;
@@ -17,7 +17,7 @@ const TopDealsBox = () => {
 
   const { isLoading, isSuccess, data } = useQuery({
     queryKey: ['topdeals'],
-    queryFn: getAllUsers,
+    queryFn: fetchTopDeals,
   });
 
   return (

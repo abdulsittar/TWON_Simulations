@@ -15,7 +15,7 @@ import connectDB from "./config/db";
 // Import controllers and routes if applicable
 import { UserController } from "./controllers/userController";
 import { NetworkController } from "./controllers/networkController";
-import { SchedulerController } from "./controllers/schedularController";
+import { SimulationController } from "./controllers/simulationController";
 import { PostController } from "./controllers/post.controller";
 
 require('dotenv').config();
@@ -98,8 +98,7 @@ connectDB();
 app.post("/users/create", UserController.createUser);
 //app.put("/users/:id", UserController.updateUser);
 app.post("/network/create", NetworkController.createNetwork);
-app.post("/scheduler/initializeScheduler", SchedulerController.initializeScheduler);
-app.post("/scheduler/runAction", SchedulerController.runAction);
+app.post("/simulation/startSimulation", SimulationController.startSimulation); 
 //app.post("/api/posts", PostController.createPost);
 
 

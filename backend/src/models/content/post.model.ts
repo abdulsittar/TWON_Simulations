@@ -1,17 +1,78 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { IUser } from "../user/user.model";
+import { IUser } from "../user/user.model"; // Assuming you have a User model interface
+import { IComment } from "../content/comment.model"; // Assuming you have a Comment model interface
+import { IPostLike } from "../content/postLike.model"; // Assuming you have a PostLike model interface
+import { IPostDislike } from "../content/postDislike.model"; // Assuming you have a PostDislike model interface
+import { IRepost } from "../content/repost.model"; // Assuming you have a Repost model interface
 
 // Post Interface
 export interface IPost extends Document {
-  content: string; // Content of the post
-  createdBy: IUser["_id"]; // Reference to the user who created the post
-  success: number; // Success of the post
+  userId: string;
+  desc: string;
+  img?: string;
+  reposts: IRepost["_id"][];
+  pool: string;
+  rank: number;
+  likes: IPostLike["_id"][];
+  dislikes: IPostDislike["_id"][];
+  comments: IComment["_id"][];
+  postedBy: IUser["_id"];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-const PostSchema: Schema = new Schema({
-  content: { type: String, required: true },
-  createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true }, // Reference to User model
-  success: { type: Number, required: true },
-});
+const PostSchema: Schema = new Schema(
+  {
+    userId: {
+      type: String,
+      required: true,
+    },
+    desc: {
+      type: String,
+      required: true,
+      maxlength: 500,
+    },
+    img: {
+      type: String,
+    },
+    reposts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Repost",
+      },
+    ],
+    pool: {
+      type: String,
+      default: "0",
+    },
+    rank: {
+      type: Number,
+      default: 0.0,
+    },
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "PostLike",
+      },
+    ],
+    dislikes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "PostDislike",
+      },
+    ],
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
+    postedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  },
+  { timestamps: true }
+);
 
 export const Post = mongoose.model<IPost>("Post", PostSchema);
