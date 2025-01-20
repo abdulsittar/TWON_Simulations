@@ -11,7 +11,7 @@ import usersRoute from './routes/userRoutes';
 import networkRoutes from "./routes/networkRoutes";
 import connectDB from "./config/db";
 
-
+//import totalVisit from './data/totalVisit';
 // Import controllers and routes if applicable
 import { UserController } from "./controllers/userController";
 import { NetworkController } from "./controllers/networkController";
@@ -37,7 +37,24 @@ const corsOptions = {
   app.use(cors(corsOptions));
   
   app.use(express.json());
+  
+  app.use(usersRoute);
+  
+  //app.get('/totalvisit', (req, res) => {
+  //  res.json(totalVisit);
+  //});
 
+// Define API routes (example for User and Post)
+app.post("/users/create", UserController.createUser);
+app.post("/users/getAllUsers", UserController.getAllUsers);
+app.post("/users/get_totalTime", UserController.get_totalTime);
+app.post("/users/get_replenishTime", UserController.get_replenishTime);
+app.post("/users/get_usedTime", UserController.get_usedTime);
+
+//app.put("/users/:id", UserController.updateUser);
+app.post("/network/create", NetworkController.createNetwork);
+app.post("/simulation/startSimulation", SimulationController.startSimulation); 
+//app.post("/api/posts", PostController.createPost);
 
 //app.use(bodyParser.json());
 // Create an HTTP server
@@ -66,7 +83,7 @@ io.on("connection", (socket: Socket) => {
   });
 
   // Handle a custom event (e.g., new post creation notification)
-  socket.on("new_post", (data) => {
+  socket.on("new_post", (data) => {-
     console.log(`New post notification from ${socket.id}:`, data);
 
     // Notify all clients about the new post
@@ -94,12 +111,6 @@ connectDB();
 
 
 
-// Define API routes (example for User and Post)
-app.post("/users/create", UserController.createUser);
-//app.put("/users/:id", UserController.updateUser);
-app.post("/network/create", NetworkController.createNetwork);
-app.post("/simulation/startSimulation", SimulationController.startSimulation); 
-//app.post("/api/posts", PostController.createPost);
-
 
 export default httpServer;
+export {io};

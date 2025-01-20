@@ -5,6 +5,7 @@
     "target": "esnext",
     "module": "commonjs",
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
     "strict": true,
@@ -14,6 +15,6 @@
     "./api/*.ts",	
     "./*.js",
     "src/**/*.ts",
-    "test/**/*.ts",
+    "test/**/*.ts", "src/utils/logs/logger.ts",
   ],
 }

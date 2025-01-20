@@ -5,30 +5,35 @@ import app from "../app";
 import http from 'http';
 import { Server } from 'socket.io';
 import axios from 'axios';
+import responseLogger from '../utils/logs/logger';
 
 const API_BASE_URL = 'http://localhost:5000/api';  
 
 const httpServer = http.createServer(app); // Create an HTTP server
-const io = new Server(httpServer,{
+const io = new Server(httpServer, {
   cors: {
     origin: 'http://localhost:3000', // React app domain
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
     credentials: true,
   },
+  transports: ['websocket', 'polling'],
 });
-  
 
 io.on('connection', (socket) => {
-    console.log(`WebSocket connected: ${socket.id}`);
+    // Adjusted log format to follow Winston's structure
+    responseLogger.info({ message: `WebSocket connected: ${socket.id}` });
+
     const manager = new Manager();
+
     setInterval(async () => {
         try {
-        
-        
           await manager.calculateTimeBudgetForAllUsers();
           await manager.askUserWithHighestTimeBudgetToCreatePost();
           const response = await axios.get(`${API_BASE_URL}/total-Time`); 
+          
+          // Example of another structured log
+          responseLogger.info({ message: `Total Time fetched: ${response.data}` });
           socket.emit('update-data', response.data);
           
         } catch (error) {
@@ -37,7 +42,7 @@ io.on('connection', (socket) => {
       }, 10000);
   
     socket.on('disconnect', () => {
-      console.log(`WebSocket disconnected: ${socket.id}`);
+      responseLogger.info(`WebSocket disconnected: ${socket.id}`);
     });
   });
 
@@ -52,9 +57,9 @@ export class Manager {
     for (const user of users) {
       if (user.timeBudget) {
         const timeBudget = user.timeBudget as any;
-        const availableTime = timeBudget.totalTime - timeBudget.usedTime;
-  
-        console.log(`User: ${user.username}, Available Time: ${availableTime}`);
+        const availableTime = timeBudget.totalTime - timeBudget.usedTime; 
+        responseLogger.info({ message: `User: ${user.username}`});
+        responseLogger.info({ message: `Available Time: ${availableTime}` });
       } else {
         console.warn(`User: ${user.username} has no associated timeBudget.`);
       }
@@ -100,9 +105,9 @@ export class Manager {
       });
       await post.save();
   
-      console.log(`User ${user.name} (with highest time budget) created a post.`);
+      responseLogger.info(`User ${user.name} (with highest time budget) created a post.`);
     } else {
-      console.log("No user has enough time budget to create a post.");
+      responseLogger.info("No user has enough time budget to create a post.");
     }
   }
   

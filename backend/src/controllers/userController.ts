@@ -59,6 +59,113 @@ export class UserController {
     }
   }
 
+  static async getAllUsers(req: Request, res: Response) {
+    try {
+      console.error("Fetching get All Users");
+      const users = await User.find().populate("timeBudget"); // Populate timeBudget if it's a reference
+      
+      const formattedUsers = users.map((user, index) => ({
+        id: index + 1,
+        img: "https://images.pexels.com/photos/8405873/pexels-photo-8405873.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load", // You can replace this with user-specific image URLs if available
+        username: user.name || "Unknown User", // Adjust based on your schema
+        email: user.email || "No Email", // Adjust based on your schema
+        amount: (Math.random() * 5).toFixed(3), // Example to generate random amounts
+      }));
+      
+      res.status(200).json(formattedUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ error: "Error fetching users" });
+    }
+  }
+
+  static async get_totalTime(req: Request, res: Response) {
+    try {
+      console.error("Fetching get All Users");
+      const users = await User.find().populate("timeBudget"); // Populate timeBudget if it's a reference
+      
+      const chartData = users.map((user, index) => {
+      const totalTime = user.timeBudget && user.timeBudget.totalTime ? user.timeBudget.totalTime : 20;
+      return {
+        name: `U ${index + 1}`, // Label the users as User 1, User 2, etc.
+        visit: totalTime // Revenue is the totalTime from TimeBudget
+      }
+      });
+      
+      // Define the response structure
+      const response = {
+        color: "#FF8042",
+        title: "Total Visit", // Title of the chart
+        dataKey: "visit", // The key representing the data in the chart (revenue)
+        chartData, // The user-specific chart data (each user's totalTime as revenue, limited to 7 users)
+      };
+      
+      res.status(200).json(response);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ error: "Error fetching users" });
+    }
+  }
+  
+  static async get_replenishTime(req: Request, res: Response) {
+    try {
+      console.error("Fetching get All Users");
+      const users = await User.find().populate("timeBudget"); // Populate timeBudget if it's a reference
+      
+      const chartData = users.map((user, index) => {
+      const totalTime = user.timeBudget && user.timeBudget.replenishRate ? user.timeBudget.replenishRate : 20;
+      return {
+        name: `U ${index + 1}`, // Label the users as User 1, User 2, etc.
+        visit: totalTime // Revenue is the totalTime from TimeBudget
+      }
+      });
+      
+      // Define the response structure
+      const response = {
+        color: "#FF8042",
+        title: "Total Visit", // Title of the chart
+        dataKey: "visit", // The key representing the data in the chart (revenue)
+        chartData, // The user-specific chart data (each user's totalTime as revenue, limited to 7 users)
+      };
+      
+      res.status(200).json(response);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ error: "Error fetching users" });
+    }
+  }
+  
+  static async get_usedTime(req: Request, res: Response) {
+    try {
+      console.error("Fetching get All Users");
+      const users = await User.find().populate("timeBudget"); // Populate timeBudget if it's a reference
+      
+      const chartData = users.map((user, index) => {
+      const totalTime = user.timeBudget && user.timeBudget.usedTime ? user.timeBudget.usedTime : 20;
+      return {
+        name: `U ${index + 1}`, // Label the users as User 1, User 2, etc.
+        visit: totalTime // Revenue is the totalTime from TimeBudget
+      }
+      });
+      
+      // Define the response structure
+      const response = {
+        color: "#FF8042",
+        title: "Total Visit", // Title of the chart
+        dataKey: "visit", // The key representing the data in the chart (revenue)
+        chartData, // The user-specific chart data (each user's totalTime as revenue, limited to 7 users)
+      };
+      
+      res.status(200).json(response);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ error: "Error fetching users" });
+    }
+  }
+
+
+
+  
   // Update a user
   static async updateUser(req: Request, res: Response) {
     try {

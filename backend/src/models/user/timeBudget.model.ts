@@ -7,8 +7,8 @@ export interface ITimeBudget extends Document {
 }
 
 const TimeBudgetSchema: Schema = new Schema({
-  totalTime: { type: Number, required: true },
-  replenishRate: { type: Number, required: false },
+  totalTime: { type: Number, required: true, default: 5 },
+  replenishRate: { type: Number, required: false, default: 10 },
   usedTime: { type: Number, default: 0 },
 });
 

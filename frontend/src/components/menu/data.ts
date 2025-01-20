@@ -1,6 +1,6 @@
 // import toast from 'react-hot-toast';
 import {
-  HiOutlineHome,HiArrowTrendingUp, HiMiniWrenchScrewdriver , HiCalculator , HiChatBubbleLeftEllipsis 
+  HiArrowTrendingUp, HiMiniWrenchScrewdriver , HiCalculator , HiChatBubbleLeftEllipsis 
 } from 'react-icons/hi2';
 // import { IoSettingsOutline } from 'react-icons/io5';
 

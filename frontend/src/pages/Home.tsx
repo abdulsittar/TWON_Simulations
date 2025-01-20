@@ -4,7 +4,9 @@ import TopDealsBox from '../components/topDealsBox/TopDealsBox';
 import ChartBox from '../components/charts/ChartBox';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { io } from 'socket.io-client';
-import { fetchTotalTime } from '../api/ApiCollection';
+import { fetchTotalTime, getTotalTime, getReplenishRate, getUsedTime } from '../api/ApiCollection';
+import axios from 'axios'; 
+
 
 const Home = () => {
   const socket = io('http://localhost:5000', {
@@ -12,18 +14,55 @@ const Home = () => {
   });
 
   const queryClient = useQueryClient();
+  //const qc_agentLifeCycle = useQueryClient();
+  
+  const queryGet_totaltime  = useQuery({queryKey:  ['totaltime'], queryFn: getTotalTime,});
+  const queryGet_replenishRate  = useQuery({queryKey:  ['replenishrate'], queryFn: getReplenishRate,});
+  const queryGet_userTime  = useQuery({queryKey:  ['usedtime'], queryFn: getUsedTime,});
+
+
+  const queryGetTotalProfit = useQuery({queryKey: ['totalprofit'], queryFn: fetchTotalTime, });
+  
+  const queryGetTotalVisit = useQuery({queryKey: ['totalprofit'], queryFn: fetchTotalTime, });
+  
+  
+  
 
   const [selectedModel, setSelectedModel] = useState('');
   const [selectedPlatform, setSelectedPlatform] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [textInput, setTextInput] = useState('');
-
-  const handleOkClick = () => {
-    console.log('Selected Model:', selectedModel);
-    console.log('Selected Platform:', selectedPlatform);
-    console.log('Selected Topic:', selectedTopic);
-    console.log('Text input:', textInput);
-  };
+    
+    
+  const handleOkClick = async () => {
+      console.log('Selected Model:', selectedModel);
+      console.log('Selected Platform:', selectedPlatform);
+      console.log('Selected Topic:', selectedTopic);
+      console.log('Text input:', textInput);
+    
+      // Emit a WebSocket event to start the simulation
+      //socket.emit('start-simulation', {
+      //  model: selectedModel,
+       // platform: selectedPlatform,
+       // topic: selectedTopic,
+       // text: textInput,
+      //});
+      try {
+        // Make an API call to start the simulation
+        const response = await axios.post('http://localhost:5000/simulation/startSimulation', {
+          model: selectedModel,
+          platform: selectedPlatform,
+          topic: selectedTopic,
+          text: textInput,
+        });
+    
+        // Handle the response after the simulation starts
+        console.log('Simulation started:', response.data);
+      } catch (error) {
+        console.error('Error starting simulation:', error);
+      }
+      
+    };
 
   const handleCancelClick = () => {
     setSelectedModel('');
@@ -44,22 +83,34 @@ const Home = () => {
     });
 
     socket.on('update-data', (updatedData) => {
-      console.log('Real-time update received:', updatedData);
+      console.log('Real-time update received:', updatedData["response"]);
 
-      queryClient.setQueryData(['totalvisit'], updatedData);
-      queryClient.setQueryData(['totalprofit'], updatedData);
+      queryClient.setQueryData(['totalvisit'], updatedData["response"]);
+      //queryClient.setQueryData(['totalprofit'], updatedData);
     });
+    
+    socket.on('timebudget_totaltime', (updatedData) => {
+      console.log('Real-time update total time:', updatedData["response1"]);
+      queryClient.setQueryData(['totaltime'], updatedData["response1"]); 
+    });
+    socket.on('timebudget_replenish', (updatedData) => {
+      console.log('Real-time update replenish time:', updatedData["response2"]);
+      queryClient.setQueryData(['replenishrate'], updatedData["response2"]); 
+    });
+    socket.on('timebudget_usedtime', (updatedData) => {
+      console.log('Real-time update used time:', updatedData["response3"]);
+      queryClient.setQueryData(['usedtime'], updatedData["response3"]); 
+    });
+    
+    
+    
+    socket.on('simulation-complete', (data) => {
+      console.log('Simulation completed:', data.message); 
+    });
+    
   }, [queryClient]);
 
-  const queryGetTotalVisit = useQuery({
-    queryKey: ['totalvisit'],
-    queryFn: fetchTotalTime,
-  });
 
-  const queryGetTotalProfit = useQuery({
-    queryKey: ['totalprofit'],
-    queryFn: fetchTotalTime,
-  });
 
   return (
     <div className="home w-full p-0 m-0">
@@ -149,10 +200,10 @@ const Home = () => {
         <div className="box col-span-full sm:col-span-1 xl:col-span-1 row-span-3">
           <ChartBox
             chartType={'bar'}
-            title="Time Budget"
-            {...queryGetTotalVisit.data}
-            isLoading={queryGetTotalVisit.isLoading}
-            isSuccess={queryGetTotalVisit.isSuccess}
+            title="Total Time"
+            {...queryGet_totaltime.data}
+            isLoading={queryGet_totaltime.isLoading}
+            isSuccess={queryGet_totaltime.isSuccess}
           />
         </div>
 
@@ -160,9 +211,9 @@ const Home = () => {
           <ChartBox
             chartType={'bar'}
             title="Time Used"
-            {...queryGetTotalProfit.data}
-            isLoading={queryGetTotalProfit.isLoading}
-            isSuccess={queryGetTotalProfit.isSuccess}
+            {...queryGet_userTime.data}
+            isLoading={queryGet_userTime.isLoading}
+            isSuccess={queryGet_userTime.isSuccess}
           />
         </div>
         
@@ -170,9 +221,9 @@ const Home = () => {
           <ChartBox
             chartType={'bar'}
             title="Replenish Rate"
-            {...queryGetTotalProfit.data}
-            isLoading={queryGetTotalProfit.isLoading}
-            isSuccess={queryGetTotalProfit.isSuccess}
+            {...queryGet_replenishRate.data}
+            isLoading={queryGet_replenishRate.isLoading}
+            isSuccess={queryGet_replenishRate.isSuccess}
           />
         </div>
       
@@ -222,6 +273,56 @@ const Home = () => {
             isSuccess={queryGetTotalProfit.isSuccess}
           />
         </div>
+        
+      
+        
+         {/* Agents Life Cycle heading (Second row) */}
+         <div className="col-span-full row-span-start row-span-1 flex items-center">
+          <h2 className="text-3xl font-semibold mb-4">Debate Quality Metrics</h2>
+        </div>
+        
+        <div className="box col-span-full sm:col-span-1 xl:col-span-1 row-span-3">
+          <ChartBox
+            chartType={'bar'}
+            title="Metric 1"
+            {...queryGetTotalProfit.data}
+            isLoading={queryGetTotalProfit.isLoading}
+            isSuccess={queryGetTotalProfit.isSuccess}
+          />
+        </div>
+        
+       
+        
+        <div className="box col-span-full sm:col-span-1 xl:col-span-1 row-span-3">
+          <ChartBox
+            chartType={'bar'}
+            title="Metric 2"
+            {...queryGetTotalVisit.data}
+            isLoading={queryGetTotalVisit.isLoading}
+            isSuccess={queryGetTotalVisit.isSuccess}
+          />
+        </div>
+
+        <div className="box col-span-full sm:col-span-1 xl:col-span-1 row-span-3">
+          <ChartBox
+            chartType={'bar'}
+            title="Metric 3"
+            {...queryGetTotalProfit.data}
+            isLoading={queryGetTotalProfit.isLoading}
+            isSuccess={queryGetTotalProfit.isSuccess}
+          />
+        </div>
+        
+        <div className="box col-span-full sm:col-span-1 xl:col-span-1 row-span-3">
+          <ChartBox
+            chartType={'bar'}
+            title="Metric 4"
+            {...queryGetTotalProfit.data}
+            isLoading={queryGetTotalProfit.isLoading}
+            isSuccess={queryGetTotalProfit.isSuccess}
+          />
+        </div>
+        
         
         
       </div>

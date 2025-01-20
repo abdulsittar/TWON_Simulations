@@ -13,6 +13,6 @@ export const getRandomInt = (min: number, max: number): number => {
 // Example function to test the delay
 export const delayedFunction = async () => {
   console.log("Action started");
-  await delay(1000);  // 1000 ms = 1 second
+  await delay(10000);  // 1000 ms = 1 second
   console.log("Action finished after 1 second delay");
 };

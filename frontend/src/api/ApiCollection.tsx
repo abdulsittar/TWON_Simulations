@@ -1,11 +1,12 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api';  // Update with your backend URL
+const API_BASE_URL = 'http://localhost:5000';  // Update with your backend URL
 
 // Function to fetch total time
 export const fetchTotalTime = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/total-Time`);
+    //const response = await axios.get(`${API_BASE_URL}simulation/startSimulation`);//total-Time`);
+    const response = await axios.get(`${API_BASE_URL}/users/getAllUsers`);
     console.log(response.data);  // This should log the formatted data
     return response.data;  // Return the formatted data
   } catch (error) {
@@ -17,7 +18,38 @@ export const fetchTotalTime = async () => {
 
 export const getAllUsers = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/getAllUsers`); 
+    const response = await axios.get(`${API_BASE_URL}/users/getAllUsers`); 
+    return response.data;  // Return the formatted data
+  } catch (error) {
+    console.error('Error fetching total time:', error);
+    throw error;
+  }
+};
+
+
+export const getTotalTime = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/users/get_totalTime`); 
+    return response.data;  // Return the formatted data
+  } catch (error) {
+    console.error('Error fetching total time:', error);
+    throw error;
+  }
+};
+
+export const getReplenishRate = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/users/get_replenishTime`); 
+    return response.data;  // Return the formatted data
+  } catch (error) {
+    console.error('Error fetching total time:', error);
+    throw error;
+  }
+};
+
+export const getUsedTime = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/users/get_usedTime`); 
     return response.data;  // Return the formatted data
   } catch (error) {
     console.error('Error fetching total time:', error);
@@ -128,6 +160,8 @@ export const fetchTotalSource = async () => {
 
 // GET TOTAL VISIT
 export const fetchTotalVisit = async () => {
+
+  console.error("fetchTotalVisit");
   const response = await axios
     .get('https://react-admin-ui-v1-api.vercel.app/totalvisit')
     .then((res) => {

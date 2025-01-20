@@ -5,6 +5,7 @@ import { IUser } from "../models/user/user.model";
 import Graph from "graphology";
 import { MultiGraph } from "graphology"; // Import MultiGraph
 import randomLayout from "graphology-layout/random";
+import  responseLogger  from '../utils/logs/logger';
 
 // Export the generateNetwork function
 export function generateNetwork(model: string, numOfUsers: number, m: number): MultiGraph {
@@ -73,7 +74,7 @@ export const processUsersAndGenerateGraph = async (
     const graph = generateRandomGraph(model, numOfUsers, m);
 
     await saveUsersToDatabase(db, users, graph);
-    console.log("Successfully completed!");
+    responseLogger.info("Successfully completed!");
 };
 
 const fetchUsers = async (db: Db, count: number): Promise<IUser[]> => {

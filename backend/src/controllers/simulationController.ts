@@ -2,19 +2,30 @@
 
 import { Request, Response } from "express";
 import { SimulationService } from "../services/simulation";
+import app from "../app";
+import http from 'http';
+import { Server } from 'socket.io';
+import  {io}  from "../app";
+
+//const httpServer = http.createServer(app);
+
+// Initialize Socket.IO with CORS options
+
 
 export class SimulationController {
   static async startSimulation(req: Request, res: Response): Promise<Response> {
     try {
+    
+      SimulationService.initialize(io);
       await SimulationService.runSimulation();
       return res.status(200).json({ message: "Simulation completed successfully." });
+      
     } catch (error) {
       console.error("Error running simulation:", error);
       return res.status(500).json({ message: "Failed to run simulation", error: error });
     }
   }
 }
-
 
 /*
  function add_A_Post(txt: string, userId: string) {
@@ -33,12 +44,12 @@ export class SimulationController {
       });
       try {
         await post.save();
-        responseLogger.log("The post has been added successfully");
+        responseLogger.info("The post has been added successfully");
       } catch (err) {
-        responseLogger.log(`Error adding post: ${err}`);
+        responseLogger.info(`Error adding post: ${err}`);
       }
     } else {
-      responseLogger.log("Post text is empty, cannot add post.");
+      responseLogger.info("Post text is empty, cannot add post.");
     }
   }
 
@@ -56,39 +67,39 @@ export class SimulationController {
         const post = await Post.findById(postId);
         if (post) {
           await post.updateOne({ $push: { comments: comment._id } });
-          responseLogger.log("The comment has been added successfully");
+          responseLogger.info("The comment has been added successfully");
         } else {
-          responseLogger.log("Post not found");
+          responseLogger.info("Post not found");
         }
       } catch (err) {
-        responseLogger.log(`Error adding comment: ${err}`);
+        responseLogger.info(`Error adding comment: ${err}`);
       }
     } else {
-      responseLogger.log("Comment text is empty, cannot add comment.");
+      responseLogger.info("Comment text is empty, cannot add comment.");
     }
   }
   
   
   async function getFollowingsAndFollowers(agentUserId: string) {
     try {
-      responseLogger.log("Fetching Followings and Followers");
+      responseLogger.info("Fetching Followings and Followers");
       const user = await User.findById(agentUserId);
       if (!user) {
-        responseLogger.log("User not found");
+        responseLogger.info("User not found");
         return;
       }
   
       const followings = user.followings;
       const followers = user.followers;
-      responseLogger.log(`Followings: ${followings.length}`);
-      responseLogger.log(`Followers: ${followers.length}`);
+      responseLogger.info(`Followings: ${followings.length}`);
+      responseLogger.info(`Followers: ${followers.length}`);
   
       const combinedUsers = [...followings, ...followers];
-      responseLogger.log(`Total combined users (followings + followers): ${combinedUsers.length}`);
+      responseLogger.info(`Total combined users (followings + followers): ${combinedUsers.length}`);
       
       return combinedUsers;
     } catch (err) {
-      responseLogger.log(`Error fetching followings and followers: ${err}`);
+      responseLogger.info(`Error fetching followings and followers: ${err}`);
     }
   }
   
@@ -101,7 +112,7 @@ export class SimulationController {
         .exec();
   
       if (!comment) {
-        responseLogger.log("Comment not found");
+        responseLogger.info("Comment not found");
         return;
       }
   
@@ -114,7 +125,7 @@ export class SimulationController {
         isAlreadyLiked = true;
         await Comment.findOneAndUpdate({ _id: commentId }, { $pull: { likes: { _id: likeId } } });
         await CommentLike.findByIdAndDelete(likeId);
-        responseLogger.log("Removed like from comment");
+        responseLogger.info("Removed like from comment");
       }
   
       if (comment.dislikes.length > 0) {
@@ -122,7 +133,7 @@ export class SimulationController {
         isAlreadyDisliked = true;
         await Comment.findOneAndUpdate({ _id: commentId }, { $pull: { dislikes: { _id: dislikeId } } });
         await CommentLike.findByIdAndDelete(dislikeId);  // Reusing the CommentLike model for dislikes (assuming same logic)
-        responseLogger.log("Removed dislike from comment");
+        responseLogger.info("Removed dislike from comment");
       }
   
       if (!isAlreadyLiked) {
@@ -130,11 +141,11 @@ export class SimulationController {
           const commentLike = new CommentLike({ userId: userId, commentId: commentId });
           await commentLike.save();
           await comment.updateOne({ $push: { likes: commentLike } });
-          responseLogger.log("Liked the comment");
+          responseLogger.info("Liked the comment");
         }
       }
     } catch (err) {
-      responseLogger.log(`Error liking comment: ${err}`);
+      responseLogger.info(`Error liking comment: ${err}`);
     }
   }
 
@@ -153,9 +164,9 @@ export class SimulationController {
         const likeId = new ObjectId(comment.likes[0]._id);
         await Comment.findOneAndUpdate({ _id: commentId }, { $pull: { 'likes': { $in: [likeId] } } });
         await CommentLike.findByIdAndDelete(likeId);
-        responseLogger.log("DONE - DISLIKE - 1");
+        responseLogger.info("DONE - DISLIKE - 1");
       } catch (err) {
-        responseLogger.log(err);
+        responseLogger.info(err);
       }
     }
   
@@ -165,9 +176,9 @@ export class SimulationController {
         const dislikeId = new ObjectId(comment.dislikes[0]._id);
         await Comment.findOneAndUpdate({ _id: commentId }, { $pull: { 'dislikes': { $in: [dislikeId] } } });
         await CommentDislike.findByIdAndDelete(dislikeId);
-        responseLogger.log("DONE - DISLIKE - 2");
+        responseLogger.info("DONE - DISLIKE - 2");
       } catch (err) {
-        responseLogger.log(err);
+        responseLogger.info(err);
       }
     }
   
@@ -176,9 +187,9 @@ export class SimulationController {
         const commentDislike = new CommentDislike({ userId, commentId });
         await commentDislike.save();
         await Comment.findByIdAndUpdate(commentId, { $push: { dislikes: commentDislike } });
-        responseLogger.log("DONE - DISLIKE - 3");
+        responseLogger.info("DONE - DISLIKE - 3");
       } catch (err) {
-        responseLogger.log(err);
+        responseLogger.info(err);
       }
     }
   }
@@ -197,9 +208,9 @@ export class SimulationController {
         const likeId = new ObjectId(post.likes[0]._id);
         await Post.findOneAndUpdate({ _id: postId }, { $pull: { 'likes': { $in: [likeId] } } });
         await PostLike.findByIdAndDelete(likeId);
-        responseLogger.log("DONE - LIKE - 1");
+        responseLogger.info("DONE - LIKE - 1");
       } catch (err) {
-        responseLogger.log(err);
+        responseLogger.info(err);
       }
     }
   
@@ -209,9 +220,9 @@ export class SimulationController {
         const dislikeId = new ObjectId(post.dislikes[0]._id);
         await Post.findOneAndUpdate({ _id: postId }, { $pull: { 'dislikes': { $in: [dislikeId] } } });
         await PostDislike.findByIdAndDelete(dislikeId);
-        responseLogger.log("DONE - LIKE - 2");
+        responseLogger.info("DONE - LIKE - 2");
       } catch (err) {
-        responseLogger.log(err);
+        responseLogger.info(err);
       }
     }
   
@@ -220,9 +231,9 @@ export class SimulationController {
         const postLike = new PostLike({ userId, postId });
         await postLike.save();
         await Post.findOneAndUpdate({ "_id": postId }, { $push: { likes: postLike } });
-        responseLogger.log("DONE - LIKE - 3");
+        responseLogger.info("DONE - LIKE - 3");
       } catch (err) {
-        responseLogger.log(err);
+        responseLogger.info(err);
       }
     }
   }
@@ -241,9 +252,9 @@ export class SimulationController {
         const likeId = new ObjectId(post.likes[0]._id);
         await Post.findOneAndUpdate({ _id: postId }, { $pull: { 'likes': { $in: [likeId] } } });
         await PostLike.findByIdAndDelete(likeId);
-        responseLogger.log("DONE - DISLIKE - 1");
+        responseLogger.info("DONE - DISLIKE - 1");
       } catch (err) {
-        responseLogger.log(err);
+        responseLogger.info(err);
       }
     }
   
@@ -253,9 +264,9 @@ export class SimulationController {
         const dislikeId = new ObjectId(post.dislikes[0]._id);
         await Post.findOneAndUpdate({ _id: postId }, { $pull: { 'dislikes': { $in: [dislikeId] } } });
         await PostDislike.findByIdAndDelete(dislikeId);
-        responseLogger.log("DONE - DISLIKE - 2");
+        responseLogger.info("DONE - DISLIKE - 2");
       } catch (err) {
-        responseLogger.log(err);
+        responseLogger.info(err);
       }
     }
   
@@ -264,9 +275,9 @@ export class SimulationController {
         const postDislike = new PostDislike({ userId, postId });
         await postDislike.save();
         await Post.findByIdAndUpdate(postId, { $push: { dislikes: postDislike } });
-        responseLogger.log("DONE - DISLIKE - 3");
+        responseLogger.info("DONE - DISLIKE - 3");
       } catch (err) {
-        responseLogger.log(err);
+        responseLogger.info(err);
       }
     }
   }
@@ -364,27 +375,27 @@ export class SimulationController {
   
   async function agent_Like_Comment_Loop(randomAgent) {
     try {
-      responseLogger.log("agent_Like_Comment_Loop");
+      responseLogger.info("agent_Like_Comment_Loop");
   
       const today = new Date();
       const Ffth_before = new Date();
       Ffth_before.setDate(today.getDate() - 30);
       Ffth_before.setHours(0, 0, 0, 0);
   
-      responseLogger.log(randomAgent);
-      responseLogger.log(randomAgent.username);
+      responseLogger.info(randomAgent);
+      responseLogger.info(randomAgent.username);
   
       const agnts = await User.find({ username: randomAgent.username });
       const agnt = agnts[0];
   
       if (!agnt) {
-        responseLogger.log("Agent not found!");
+        responseLogger.info("Agent not found!");
         return;
       }
   
       const allfofo = await getFollowingsAndFollowers(agnt._id);
       const result = await recommender.fetchAllPosts({ userId: allfofo });
-      responseLogger.log("Fetched posts: ", result);
+      responseLogger.info("Fetched posts: ", result);
   
       const comments = await Comment.find({
         userId: { $in: allfofo },
@@ -419,20 +430,20 @@ export class SimulationController {
           body: jsonContent
         }).then(response => response.json());
   
-        responseLogger.log(res);
+        responseLogger.info(res);
         if (res.response) {
           await like_A_Comment(agnt._id, comment._id);
         }
       }
     } catch (err) {
-      responseLogger.log("Error in agent_Like_Comment_Loop:", err);
+      responseLogger.info("Error in agent_Like_Comment_Loop:", err);
     }
   }
   
   
   async function agent_Like_Post_Loop(randomAgent) {
     try {
-      responseLogger.log("agent_Like_Post_Loop");
+      responseLogger.info("agent_Like_Post_Loop");
   
       const today = new Date();
       const Ffth_before = new Date();
@@ -443,13 +454,13 @@ export class SimulationController {
       const agnt = agnts[0];
   
       if (!agnt) {
-        responseLogger.log("Agent not found!");
+        responseLogger.info("Agent not found!");
         return;
       }
   
       const allfofo = await getFollowingsAndFollowers(agnt._id);
       const result = await recommender.fetchAllPosts({ userId: allfofo });
-      responseLogger.log("Fetched posts: ", result);
+      responseLogger.info("Fetched posts: ", result);
   
       const posts = await Post.find({ userId: { $in: allfofo } })
         .populate({ path: "comments", model: "Comment" })
@@ -480,20 +491,20 @@ export class SimulationController {
           body: jsonContent
         }).then(response => response.json());
   
-        responseLogger.log(res);
+        responseLogger.info(res);
         if (res.response) {
           await like_A_Post(agnt._id, post._id);
         }
       }
     } catch (err) {
-      responseLogger.log("Error in agent_Like_Post_Loop:", err);
+      responseLogger.info("Error in agent_Like_Post_Loop:", err);
     }
   }
   
   
   async function agent_Reply_Comment_Loop(randomAgent) {
     try {
-      responseLogger.log("agent_Reply_Comment_Loop");
+      responseLogger.info("agent_Reply_Comment_Loop");
   
       const today = new Date();
       const Ffth_before = new Date();
@@ -504,7 +515,7 @@ export class SimulationController {
       const agnt = agnts[0];
   
       if (!agnt) {
-        responseLogger.log("Agent not found!");
+        responseLogger.info("Agent not found!");
         return;
       }
   
@@ -529,7 +540,7 @@ export class SimulationController {
         };
   
         const jsonContent = JSON.stringify(jsn);
-        responseLogger.log(jsonContent);
+        responseLogger.info(jsonContent);
   
         const res = await fetch(`${process.env.AGENTS_URL}reply/`, {
           method: "POST",
@@ -543,24 +554,24 @@ export class SimulationController {
   
         if (res.ok) {
           const responseData = await res.json();
-          responseLogger.log(responseData);
+          responseLogger.info(responseData);
   
           if (responseData.response) {
             await add_A_Comment(responseData.response, agnt._id, POST_ID_REPLY, agnt.username);
           }
         } else {
-          responseLogger.log(`Error in fetch: ${res.statusText}`);
+          responseLogger.info(`Error in fetch: ${res.statusText}`);
         }
       }
     } catch (err) {
-      responseLogger.log("Error in agent_Reply_Comment_Loop:", err);
+      responseLogger.info("Error in agent_Reply_Comment_Loop:", err);
     }
   }
   
   
   async function agent_Generate_Post_Loop(randomAgent) {
     try {
-      responseLogger.log("agent_Generate_Post_Loop");
+      responseLogger.info("agent_Generate_Post_Loop");
   
       const today = new Date();
       const Ffth_before = new Date();
@@ -571,13 +582,13 @@ export class SimulationController {
       const agnt = agnts[0];
   
       if (!agnt) {
-        responseLogger.log("Agent not found!");
+        responseLogger.info("Agent not found!");
         return;
       }
   
       const allfofo = await getFollowingsAndFollowers(agnt._id);
       const result = await recommender.fetchAllPosts({ userId: allfofo });
-      responseLogger.log("Fetched posts: ", result);
+      responseLogger.info("Fetched posts: ", result);
   
       const interactions = await get_Interactions_Agent_on_Comments(agnt);
   
@@ -592,7 +603,7 @@ export class SimulationController {
       };
   
       const jsonContent = JSON.stringify(jsn);
-      responseLogger.log(jsonContent);
+      responseLogger.info(jsonContent);
   
       const res = await fetch(`${process.env.AGENTS_URL}generate/`, {
         method: "POST",
@@ -603,12 +614,12 @@ export class SimulationController {
         body: jsonContent
       }).then(response => response.json());
   
-      responseLogger.log(res);
+      responseLogger.info(res);
       if (res.response) {
         await add_A_Post(res.response, agnt._id);
       }
     } catch (err) {
-      responseLogger.log("Error in agent_Generate_Post_Loop:", err);
+      responseLogger.info("Error in agent_Generate_Post_Loop:", err);
     }
   }
   */
