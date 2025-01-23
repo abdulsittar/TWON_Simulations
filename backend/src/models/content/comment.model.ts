@@ -6,6 +6,7 @@ import { ICommentDislike } from "../content/commentDislike.model"; // Assuming y
 
 // Comment Interface
 export interface IComment extends Document {
+  _id: mongoose.Types.ObjectId;
   body: string;
   userId: IUser["_id"];
   username: string;

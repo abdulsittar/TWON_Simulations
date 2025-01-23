@@ -9,6 +9,7 @@ export interface IUser extends Document {
   username: string;
   name: string;
   email: string;
+  persona: string;
   motivation: number;
   engagement: number; // Engagement level of the user
   success: number; // Success level of the user

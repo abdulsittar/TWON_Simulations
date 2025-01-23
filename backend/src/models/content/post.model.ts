@@ -15,7 +15,8 @@ export interface IPost extends Document {
   rank: number;
   likes: IPostLike["_id"][];
   dislikes: IPostDislike["_id"][];
-  comments: IComment["_id"][];
+  //comments: IComment["_id"][];
+  comments: IComment[]; 
   postedBy: IUser["_id"];
   createdAt?: Date;
   updatedAt?: Date;

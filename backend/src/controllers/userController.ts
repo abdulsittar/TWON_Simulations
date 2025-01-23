@@ -95,7 +95,7 @@ export class UserController {
       // Define the response structure
       const response = {
         color: "#FF8042",
-        title: "Total Visit", // Title of the chart
+        title: "Total Time", // Title of the chart
         dataKey: "visit", // The key representing the data in the chart (revenue)
         chartData, // The user-specific chart data (each user's totalTime as revenue, limited to 7 users)
       };
@@ -123,7 +123,7 @@ export class UserController {
       // Define the response structure
       const response = {
         color: "#FF8042",
-        title: "Total Visit", // Title of the chart
+        title: "Replenish Rate", // Title of the chart
         dataKey: "visit", // The key representing the data in the chart (revenue)
         chartData, // The user-specific chart data (each user's totalTime as revenue, limited to 7 users)
       };
@@ -151,7 +151,7 @@ export class UserController {
       // Define the response structure
       const response = {
         color: "#FF8042",
-        title: "Total Visit", // Title of the chart
+        title: "Used Time", // Title of the chart
         dataKey: "visit", // The key representing the data in the chart (revenue)
         chartData, // The user-specific chart data (each user's totalTime as revenue, limited to 7 users)
       };
