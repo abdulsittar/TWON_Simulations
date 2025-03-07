@@ -8,6 +8,7 @@ export interface ICommentLike extends Document {
   commentId: IComment["_id"];
   createdAt?: Date;
   updatedAt?: Date;
+  isPublic:boolean;
 }
 
 const CommentLikeSchema: Schema = new Schema(
@@ -17,6 +18,7 @@ const CommentLikeSchema: Schema = new Schema(
       ref: "User",
       required: true,
     },
+    isPublic:{ type: Boolean, required: true },
     commentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Comment",

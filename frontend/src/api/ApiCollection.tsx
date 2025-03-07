@@ -58,6 +58,28 @@ export const getUsedTime = async () => {
 };
 
 
+export const getPostsPerUser = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/posts/get_postsPerUser`); 
+    return response.data;  // Return the formatted data
+  } catch (error) {
+    console.error('Error fetching total time:', error);
+    throw error;
+  }
+};
+
+
+export const get_postsPerUserWithLowRanking = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/posts/get_postsPerUserWithLowRanking`); 
+    return response.data;  // Return the formatted data
+  } catch (error) {
+    console.error('Error fetching total time:', error);
+    throw error;
+  }
+};
+
+
 
 // GET TOP DEALS
 export const fetchTopDeals = async () => {

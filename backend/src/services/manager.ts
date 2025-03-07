@@ -22,7 +22,7 @@ const io = new Server(httpServer, {
 
 io.on('connection', (socket) => {
     // Adjusted log format to follow Winston's structure
-    responseLogger.info({ message: `WebSocket connected: ${socket.id}` });
+    responseLogger.debug({ message: `WebSocket connected: ${socket.id}` });
 
     const manager = new Manager();
 
@@ -33,7 +33,7 @@ io.on('connection', (socket) => {
           const response = await axios.get(`${API_BASE_URL}/total-Time`); 
           
           // Example of another structured log
-          responseLogger.info({ message: `Total Time fetched: ${response.data}` });
+          responseLogger.debug({ message: `Total Time fetched: ${response.data}` });
           socket.emit('update-data', response.data);
           
         } catch (error) {
@@ -42,7 +42,7 @@ io.on('connection', (socket) => {
       }, 10000);
   
     socket.on('disconnect', () => {
-      responseLogger.info(`WebSocket disconnected: ${socket.id}`);
+      responseLogger.debug(`WebSocket disconnected: ${socket.id}`);
     });
   });
 
@@ -58,8 +58,8 @@ export class Manager {
       if (user.timeBudget) {
         const timeBudget = user.timeBudget as any;
         const availableTime = timeBudget.totalTime - timeBudget.usedTime; 
-        responseLogger.info({ message: `User: ${user.username}`});
-        responseLogger.info({ message: `Available Time: ${availableTime}` });
+        responseLogger.debug({ message: `User: ${user.username}`});
+        responseLogger.debug({ message: `Available Time: ${availableTime}` });
       } else {
         console.warn(`User: ${user.username} has no associated timeBudget.`);
       }
@@ -105,9 +105,9 @@ export class Manager {
       });
       await post.save();
   
-      responseLogger.info(`User ${user.name} (with highest time budget) created a post.`);
+      responseLogger.debug(`User ${user.name} (with highest time budget) created a post.`);
     } else {
-      responseLogger.info("No user has enough time budget to create a post.");
+      responseLogger.debug("No user has enough time budget to create a post.");
     }
   }
   

@@ -4,6 +4,12 @@ import { TimeBudget } from "../models/user/timeBudget.model"; // Assuming TimeBu
 import { AMCDOpinionModel } from "../models/user/opinion.model";
 import { SimpleLogger } from "../models/user/logger.model";
 import { DefaultActor } from "../models/user/actor.model";
+import { Analytics } from "../models/content/analytics.model";
+import { MotivationAnalytics } from "../models/content/motAnalytics.model";
+import { TimeBudgetAnalytics } from "../models/content/timebudgetAna.model";
+import { Actions } from "../models/content/actions.model";
+import { RanAct } from "../models/content/rankAna.model";
+import { IntAct } from "../models/content/interAna.model";
 
 export class UserController {
   // Create a new user
@@ -35,12 +41,14 @@ export class UserController {
         // Create the new user (agent) with all properties, including opinionModel, logger, actor
         const user = new User({
           ...req.body,
+          loggedIn : false,
           timeBudget: savedTimeBudget._id, // Reference to the saved TimeBudget
           opinionModel,  // Add the opinionModel for the agent's opinions
           logger,        // Add the logger for the agent's actions
           actor,         // Add the actor defining how the agent behaves
           frustration: Math.floor(Math.random() * 50), // Default frustration level
           biases:{ politics: Math.random() },     // Default empty biases
+          notificationEffect: Math.floor(Math.random() * 50),
           timeBudgetRemaining: req.body.timeBudget.totalTime - req.body.timeBudget.usedTime, // Remaining time budget
         });
 
@@ -85,7 +93,7 @@ export class UserController {
       const users = await User.find().populate("timeBudget"); // Populate timeBudget if it's a reference
       
       const chartData = users.map((user, index) => {
-      const totalTime = user.timeBudget && user.timeBudget.totalTime ? user.timeBudget.totalTime : 20;
+      const totalTime = (user.timeBudget as { totalTime: number }).totalTime || 20;
       return {
         name: `U ${index + 1}`, // Label the users as User 1, User 2, etc.
         visit: totalTime // Revenue is the totalTime from TimeBudget
@@ -113,7 +121,9 @@ export class UserController {
       const users = await User.find().populate("timeBudget"); // Populate timeBudget if it's a reference
       
       const chartData = users.map((user, index) => {
-      const totalTime = user.timeBudget && user.timeBudget.replenishRate ? user.timeBudget.replenishRate : 20;
+      
+      const totalTime = (user.timeBudget as { replenishRate: number }).replenishRate || 20;
+ 
       return {
         name: `U ${index + 1}`, // Label the users as User 1, User 2, etc.
         visit: totalTime // Revenue is the totalTime from TimeBudget
@@ -134,14 +144,16 @@ export class UserController {
       res.status(500).json({ error: "Error fetching users" });
     }
   }
-  
+ 
   static async get_usedTime(req: Request, res: Response) {
     try {
       console.error("Fetching get All Users");
       const users = await User.find().populate("timeBudget"); // Populate timeBudget if it's a reference
       
-      const chartData = users.map((user, index) => {
-      const totalTime = user.timeBudget && user.timeBudget.usedTime ? user.timeBudget.usedTime : 20;
+      const chartData = users.map((user, index) => { 
+      
+      const totalTime = (user.timeBudget as { usedTime: number }).usedTime || 20;
+
       return {
         name: `U ${index + 1}`, // Label the users as User 1, User 2, etc.
         visit: totalTime // Revenue is the totalTime from TimeBudget
@@ -163,9 +175,6 @@ export class UserController {
     }
   }
 
-
-
-  
   // Update a user
   static async updateUser(req: Request, res: Response) {
     try {
@@ -184,4 +193,142 @@ export class UserController {
       res.status(400).json({ error: "Error updating user" });
     }
   }
+  
+static async latestAnalytics(req: Request, res: Response) {
+  try {
+    const latestData = await Analytics.findOne().sort({ date: -1 });
+
+    if (!latestData) {
+      return res.status(404).json({ error: "No analytics data found" });
+    }
+
+    // ✅ Extract user activity data for line chart
+    const activityData = latestData.userActivity.map(entry => ({
+      time: entry.time,
+      user: entry.user,
+      status: entry.status
+    }));
+
+    res.status(200).json({
+      userActivity: activityData, // ✅ NEW: Activity data for Line Graph
+      featureUsage: latestData.featureUsage,
+      heatmapData: latestData.heatmapData,
+    });
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(500).json({ error: "Error fetching analytics data" });
+  }
+};
+
+
+static async latestUserActionsInteraction(req: Request, res: Response) {
+  try {
+    const latestData = await IntAct.findOne().sort({ date: -1 });
+
+    if (!latestData) {
+      return res.status(404).json({ error: "No analytics data found" });
+    }
+
+    // ✅ Extract user actions data for line chart
+    //const actionsData = latestData.userActions.map(entry => ({
+    //  time: entry.time,         // Timestamp when the action occurred
+    //  user: entry.user,         // User who performed the action
+     // status: entry.status      // Type of action (e.g., "like", "post", "comment")
+    //}));
+
+    res.status(200).json({
+      interactions: latestData.interactions, // ✅ NEW: User actions data for Line Graph
+    });
+  } catch (error) {
+    console.error("Error fetching user actions:", error);
+    res.status(500).json({ error: "Error fetching user actions data" });
+  }
+};
+
+
+static async latestUserActionsRanking(req: Request, res: Response) {
+  try {
+    const latestData = await RanAct.findOne().sort({ date: -1 });
+
+    if (!latestData) {
+      return res.status(404).json({ error: "No analytics data found" });
+    }
+
+    // ✅ Extract user actions data for line chart
+   // const actionsData = latestData.userActions.map(entry => ({
+    //  time: entry.time,         // Timestamp when the action occurred
+   //   user: entry.user,         // User who performed the action
+   //   status: entry.status      // Type of action (e.g., "like", "post", "comment")
+   // }));
+
+    res.status(200).json({
+      rankings: latestData.rankings, // ✅ NEW: User actions data for Line Graph
+    });
+  } catch (error) {
+    console.error("Error fetching user actions:", error);
+    res.status(500).json({ error: "Error fetching user actions data" });
+  }
+};
+
+
+
+static async latestAnalyticsTB(req: Request, res: Response) {
+  try {
+    const latestData = await TimeBudgetAnalytics.findOne().sort({ date: -1 });
+
+    if (!latestData) {
+      return res.status(404).json({ error: "No analytics data found" });
+    }
+
+    res.status(200).json({ timebudget: latestData.timebudget });
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(500).json({ error: "Error fetching analytics data" });
+  }
+};
+
+
+static async latestAnalyticsMotivation(req: Request, res: Response) {
+  try {
+    const latestData = await MotivationAnalytics.findOne().sort({ date: -1 });
+
+    if (!latestData) {
+      console.error("No motivation data found in the database.");
+      return res.status(404).json({ error: "No analytics data found" });
+    }
+
+    console.log("Fetched motivation data:", latestData);
+    res.status(200).json({ timebudget: latestData.timebudget });
+  } catch (error) {
+    console.error("Error fetching motivation data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+static async latestUserActions(req: Request, res: Response) {
+  try {
+    const latestData = await Actions.findOne().sort({ date: -1 });
+
+    if (!latestData) {
+      return res.status(404).json({ error: "No analytics data found" });
+    }
+
+    // ✅ Extract user actions data for line chart
+    const actionsData = latestData.userActions.map(entry => ({
+      time: entry.time,         // Timestamp when the action occurred
+      user: entry.user,         // User who performed the action
+      action: entry.action      // Type of action (e.g., "like", "post", "comment")
+    }));
+
+    res.status(200).json({
+      userActions: actionsData, // ✅ NEW: User actions data for Line Graph
+    });
+  } catch (error) {
+    console.error("Error fetching user actions:", error);
+    res.status(500).json({ error: "Error fetching user actions data" });
+  }
+};
+
+
 }

@@ -9,6 +9,9 @@ export default {
       screens: {
         '3xl': '2200px',
       },
+      colors: {
+        primary: "rgb(59, 130, 246)", // Use RGB colors instead of Tailwind defaults
+      },
     },
   },
   plugins: [require('daisyui')],

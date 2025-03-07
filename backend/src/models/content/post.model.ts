@@ -7,6 +7,7 @@ import { IRepost } from "../content/repost.model"; // Assuming you have a Repost
 
 // Post Interface
 export interface IPost extends Document {
+  _id: string | mongoose.Types.ObjectId;
   userId: string;
   desc: string;
   img?: string;
@@ -15,9 +16,10 @@ export interface IPost extends Document {
   rank: number;
   likes: IPostLike["_id"][];
   dislikes: IPostDislike["_id"][];
+  isPublic:boolean;
   //comments: IComment["_id"][];
   comments: IComment[]; 
-  postedBy: IUser["_id"];
+  postedBy: mongoose.Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -36,6 +38,7 @@ const PostSchema: Schema = new Schema(
     img: {
       type: String,
     },
+    isPublic:{ type: Boolean, required: true },
     reposts: [
       {
         type: mongoose.Schema.Types.ObjectId,

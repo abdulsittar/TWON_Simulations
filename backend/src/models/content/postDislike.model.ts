@@ -8,6 +8,7 @@ export interface IPostDislike extends Document {
   postId: IPost["_id"];
   createdAt?: Date;
   updatedAt?: Date;
+  isPublic:boolean;
 }
 
 const PostDislikeSchema: Schema = new Schema(
@@ -17,6 +18,7 @@ const PostDislikeSchema: Schema = new Schema(
       ref: "User",
       required: true,
     },
+    isPublic:{ type: Boolean, required: true },
     postId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Post",

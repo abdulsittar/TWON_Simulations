@@ -15,6 +15,7 @@ export interface IComment extends Document {
   postId: IPost["_id"];
   createdAt?: Date;
   updatedAt?: Date;
+  isPublic:boolean;
 }
 
 const CommentSchema: Schema = new Schema(
@@ -23,6 +24,7 @@ const CommentSchema: Schema = new Schema(
       type: String,
       required: true,
     },
+    isPublic:{ type: Boolean, required: true },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

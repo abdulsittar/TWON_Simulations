@@ -11,13 +11,16 @@
     "strict": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,  // Enable decorators
-    "emitDecoratorMetadata": true    // Emit decorator metadata
+    "emitDecoratorMetadata": true,    // Emit decorator metadata
+    "moduleResolution": "node"
   },
   "include": [
     "./api/*.ts",
     "./*.js",
     "src/**/*.ts",
     "test/**/*.ts",
-    "src/utils/logs/logger.ts"
+    "src/utils/logs/logger.ts",
+    "src/types/**/*", 
+    "src/**/*.ts"
   ]
 }

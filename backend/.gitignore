@@ -6,6 +6,8 @@ yarn-debug.log*
 yarn-error.log*
 /backend/tests
 backend/tests
+/backend/public/models/model.onnx
+backend/public/models/model.onnx
 # Runtime data
 pids
 *.pid

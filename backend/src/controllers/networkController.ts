@@ -3,6 +3,14 @@ import { MultiGraph } from "graphology"; // Import MultiGraph
 import { User } from "../models/user/user.model"; // Import your User model
 import randomLayout from "graphology-layout/random";
 
+import { createCanvas } from "canvas";
+import fs from "fs";
+import { Sigma } from "sigma";
+import  Graph from "graphology";
+//import { renderToStaticMarkup } from "react-dom/server";
+import { exec } from "child_process";
+
+
 // Define request body type for type safety
 interface NetworkRequestBody {
   userIds: string[]; // Array of user IDs
@@ -13,6 +21,9 @@ interface NetworkRequestBody {
 
 export class NetworkController {
   // Generate Graph Handler
+ 
+     
+  
   static async createNetwork(req: Request, res: Response) {
     try {
       const { userIds, model, numOfUsers, m }: NetworkRequestBody = req.body;
@@ -60,6 +71,9 @@ export class NetworkController {
         return { source: sourceId, target: targetId };
       }).filter(Boolean); // Remove any null values resulting from invalid edges
 
+      
+
+
       // Prepare database updates for followers and followings
       const updates = graph.edges().map((edgeKey) => {
         const sourceNode = graph.source(edgeKey);
@@ -94,6 +108,17 @@ export class NetworkController {
         id: nodeIdToUserId[node], // Map node ID to userId
         ...graph.getNodeAttributes(node),
       }));
+ 
+      
+      // Save to file
+    fs.writeFileSync("network.dot", exportToDOT(graph));
+    
+    // Convert DOT to PNG using Graphviz
+    exec("dot -Tpng network.dot -o network.png", (error) => {
+      if (error) console.error("Error generating PNG:", error);
+      else console.log("✅ Graph saved as network.png");
+    });
+
 
       return res.status(200).json({
         message: "Graph and database updated successfully",
@@ -110,6 +135,16 @@ export class NetworkController {
     }
   }
 }
+
+function exportToDOT(graph: MultiGraph): string {
+  let dot = "graph G {\n";
+  graph.forEachEdge((edge, _, source, target) => {
+    dot += `  "${source}" -- "${target}";\n`;
+  });
+  dot += "}";
+  return dot;
+}
+
 
 function generateNetwork(userIds: string[], model: string, numOfUsers: number, m: number): MultiGraph {
   const graph = new MultiGraph(); // Use MultiGraph instead of Graph

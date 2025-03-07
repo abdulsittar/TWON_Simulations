@@ -6,7 +6,7 @@ import { getAllUsers } from '../../api/ApiCollection';
 interface topDealsUser {
   username: string;
   name: string;
-  email: string;
+  email: string; 
   motivation: number;
   engagement: number; // Engagement level of the user
   success: number; // Success level of the user
@@ -51,7 +51,7 @@ const TopDealsBox = () => {
               <div className="flex gap-3 2xl:gap-4 items-center">
                 <div className="avatar">
                   <div className="w-11 xl:w-8 2xl:w-16 3xl:w-20 rounded-full">
-                    <img src={""} alt={`user${index}`} />
+                    <img src={`/images/${user.name}`} alt={`user${index}`} />
                   </div>
                 </div>
                 <div className="flex flex-col items-start gap-1">

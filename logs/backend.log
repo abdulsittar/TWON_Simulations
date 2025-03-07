@@ -1,0 +1,183 @@
+podman-compose version: 1.0.6
+['podman', '--version', '']
+using podman version: 3.3.1
+** excluding:  set()
+podman build -f ./backend/Dockerfile -t twon_simulations_backend ./backend
+STEP 1/7: FROM node:20.2.0
+STEP 2/7: WORKDIR /usr/src/app
+--> Using cache 3766ae79331c058ebc92566d5eab5dfef8348dbf7afb0b6bdc9cbf5530d0c96b
+--> 3766ae79331
+STEP 3/7: COPY package*.json ./
+--> Using cache e3851919438edf0edcfb2d49668f3aa4087da37eef4d014c63a721fc3128e076
+--> e3851919438
+STEP 4/7: RUN npm install
+--> Using cache ae02e5f70886dc6d21fea0b2af1d9382b1b3e825196f7306dc1a4d642f10da9b
+--> ae02e5f7088
+STEP 5/7: COPY . .
+--> Using cache 57e3f57b11e2a60ac1be28ef0adcb711d73eb02b00f9363d3148a4f802aa41cb
+--> 57e3f57b11e
+STEP 6/7: EXPOSE 5000
+--> Using cache d4f900aca7eb8cd2d3071e091418d35cc8497a80d01131d13e0f7446c16e0b85
+--> d4f900aca7e
+STEP 7/7: CMD ["npm", "run", "dev"]
+--> Using cache 3423286eb6b2ada48d3ce1a4cb54b88e83332070448c8589ca07cbec6d65274c
+COMMIT twon_simulations_backend
+--> 3423286eb6b
+Successfully tagged localhost/twon_simulations_backend:latest
+3423286eb6b2ada48d3ce1a4cb54b88e83332070448c8589ca07cbec6d65274c
+exit code: 0
+podman build -f ./frontend/Dockerfile -t twon_simulations_frontend ./frontend
+[1/2] STEP 1/6: FROM node:20.2.0 AS build
+[1/2] STEP 2/6: WORKDIR /app
+--> Using cache c7f91a5bc65bd19fd8d2f12137393ca7d1c0ac245a68846f69e527ab863328f0
+--> c7f91a5bc65
+[1/2] STEP 3/6: COPY package.json package-lock.json ./
+--> Using cache a7d39d618e4d2be66da0b9b8846a265720bf1892ae81236d222656e5e60b14c9
+--> a7d39d618e4
+[1/2] STEP 4/6: RUN npm install
+--> Using cache 1f447cb81a1f36ee3fd74e5b03b57ead756f38d7161ad047b4e91ce7b463b237
+--> 1f447cb81a1
+[1/2] STEP 5/6: COPY . .
+--> Using cache ba5f2a23517cc1d9caaf7fe4b0558e5042c1c1bc83035ba0c6e7adf26a2961e9
+--> ba5f2a23517
+[1/2] STEP 6/6: RUN npm run build 
+--> Using cache 03cf1dd5cc1295176ece0c0837e516db448b268e70a2cfcd6f40f53eca8e3cc4
+--> 03cf1dd5cc1
+[2/2] STEP 1/8: FROM node:20.2.0
+[2/2] STEP 2/8: WORKDIR /app 
+--> Using cache 9947e674b91f11e9ed77bee5a7cf941c19547dfeb9599b0a943c1ad7eb34136c
+--> 9947e674b91
+[2/2] STEP 3/8: COPY --from=build /app/dist ./build 
+--> Using cache ac649e46f1158d205f5bef648363a7d49118294c30af5444716405623410dedd
+--> ac649e46f11
+[2/2] STEP 4/8: COPY package.json package-lock.json ./
+--> Using cache 00c6804af3f21f6b507878e16043b01d19a149cc9963694d6c39fa6c91aa5a81
+--> 00c6804af3f
+[2/2] STEP 5/8: RUN npm install
+--> Using cache 4f781ae3bf1e19a3d1a63d032b300d2896f51e952d6cf8bd175b4edc856222a6
+--> 4f781ae3bf1
+[2/2] STEP 6/8: COPY . .
+--> Using cache e2c56dc00993eff9be4f0722d7c501bc8d514ac307a5601403a195139f2e7a50
+--> e2c56dc0099
+[2/2] STEP 7/8: EXPOSE 3000
+--> Using cache bf7e05ebac953b292803912169d908821c402e2e2616b4d1ea17e24af5712903
+--> bf7e05ebac9
+[2/2] STEP 8/8: CMD ["npm", "run", "dev"]
+--> Using cache d5c8e0a9b53d4968412eb096e99d8199848fc91014cbd5592ad5d4a8c241fa25
+[2/2] COMMIT twon_simulations_frontend
+--> d5c8e0a9b53
+Successfully tagged localhost/twon_simulations_frontend:latest
+d5c8e0a9b53d4968412eb096e99d8199848fc91014cbd5592ad5d4a8c241fa25
+exit code: 0
+['podman', 'ps', '--filter', 'label=io.podman.compose.project=twon_simulations', '-a', '--format', '{{ index .Labels "io.podman.compose.config-hash"}}']
+podman volume inspect twon_simulations_mongodb-data || podman volume create twon_simulations_mongodb-data
+['podman', 'volume', 'inspect', 'twon_simulations_mongodb-data']
+['podman', 'network', 'exists', 'twon_simulations_simulation-net']
+podman create --name=twon_simulations_mongodb_1 --label io.podman.compose.config-hash=19b9d16e4948c236aa6c03f25d396e3670be7ca12d5d8c3bc929119b3523ecfa --label io.podman.compose.project=twon_simulations --label io.podman.compose.version=1.0.6 --label PODMAN_SYSTEMD_UNIT=podman-compose@twon_simulations.service --label com.docker.compose.project=twon_simulations --label com.docker.compose.project.working_dir=/home/adbuls/TWON_Simulations --label com.docker.compose.project.config_files=docker-compose.yml --label com.docker.compose.container-number=1 --label com.docker.compose.service=mongodb -v twon_simulations_mongodb-data:/data/db --net twon_simulations_simulation-net --network-alias mongodb -p 27017:27017 mongo:latest
+5e274ade8e2904c3df0af5c8490c403ce4d5433d7315f37d01a48fd4edc99b7a
+exit code: 0
+['podman', 'network', 'exists', 'twon_simulations_simulation-net']
+podman create --name=twon_simulations_backend_1 --requires=twon_simulations_mongodb_1 --label io.podman.compose.config-hash=19b9d16e4948c236aa6c03f25d396e3670be7ca12d5d8c3bc929119b3523ecfa --label io.podman.compose.project=twon_simulations --label io.podman.compose.version=1.0.6 --label PODMAN_SYSTEMD_UNIT=podman-compose@twon_simulations.service --label com.docker.compose.project=twon_simulations --label com.docker.compose.project.working_dir=/home/adbuls/TWON_Simulations --label com.docker.compose.project.config_files=docker-compose.yml --label com.docker.compose.container-number=1 --label com.docker.compose.service=backend --net twon_simulations_simulation-net --network-alias backend -p 5000:5000 twon_simulations_backend
+e4c8c83e8e07b36295cfd8d55d7740db1587702bdee1ca10b060e99dacbaa6ce
+exit code: 0
+['podman', 'network', 'exists', 'twon_simulations_simulation-net']
+podman create --name=twon_simulations_frontend_1 --requires=twon_simulations_mongodb_1,twon_simulations_backend_1 --label io.podman.compose.config-hash=19b9d16e4948c236aa6c03f25d396e3670be7ca12d5d8c3bc929119b3523ecfa --label io.podman.compose.project=twon_simulations --label io.podman.compose.version=1.0.6 --label PODMAN_SYSTEMD_UNIT=podman-compose@twon_simulations.service --label com.docker.compose.project=twon_simulations --label com.docker.compose.project.working_dir=/home/adbuls/TWON_Simulations --label com.docker.compose.project.config_files=docker-compose.yml --label com.docker.compose.container-number=1 --label com.docker.compose.service=frontend --net twon_simulations_simulation-net --network-alias frontend -p 3000:3000 twon_simulations_frontend
+b0a5ae5511da436d592458c7daacf3cf4e2749a9ce986da092ce3b1017faf921
+exit code: 0
+podman start -a twon_simulations_mongodb_1
+chown: changing ownership of '/proc/1/fd/1': Permission denied
+chown: changing ownership of '/proc/1/fd/2': Permission denied
+podman start -a twon_simulations_backend_1
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:25.983+00:00"},"s":"I",  "c":"CONTROL",  "id":23285,   "ctx":"main","msg":"Automatically disabling TLS 1.0, to force-enable TLS 1.0 specify --sslDisabledProtocols 'none'"}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:25.983+00:00"},"s":"I",  "c":"CONTROL",  "id":5945603, "ctx":"main","msg":"Multi threading initialized"}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:25.984+00:00"},"s":"I",  "c":"NETWORK",  "id":4648601, "ctx":"main","msg":"Implicit TCP FastOpen unavailable. If TCP FastOpen is required, set at least one of the related parameters","attr":{"relatedParameters":["tcpFastOpenServer","tcpFastOpenClient","tcpFastOpenQueueSize"]}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:25.984+00:00"},"s":"I",  "c":"NETWORK",  "id":4915701, "ctx":"main","msg":"Initialized wire specification","attr":{"spec":{"incomingExternalClient":{"minWireVersion":0,"maxWireVersion":25},"incomingInternalClient":{"minWireVersion":0,"maxWireVersion":25},"outgoing":{"minWireVersion":6,"maxWireVersion":25},"isInternalClient":true}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:25.985+00:00"},"s":"I",  "c":"TENANT_M", "id":7091600, "ctx":"main","msg":"Starting TenantMigrationAccessBlockerRegistry"}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:25.985+00:00"},"s":"I",  "c":"CONTROL",  "id":4615611, "ctx":"initandlisten","msg":"MongoDB starting","attr":{"pid":1,"port":27017,"dbPath":"/data/db","architecture":"64-bit","host":"5e274ade8e29"}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:25.985+00:00"},"s":"I",  "c":"CONTROL",  "id":23403,   "ctx":"initandlisten","msg":"Build Info","attr":{"buildInfo":{"version":"8.0.4","gitVersion":"bc35ab4305d9920d9d0491c1c9ef9b72383d31f9","openSSLVersion":"OpenSSL 3.0.13 30 Jan 2024","modules":[],"allocator":"tcmalloc-google","environment":{"distmod":"ubuntu2404","distarch":"x86_64","target_arch":"x86_64"}}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:25.985+00:00"},"s":"I",  "c":"CONTROL",  "id":51765,   "ctx":"initandlisten","msg":"Operating System","attr":{"os":{"name":"Ubuntu","version":"24.04"}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:25.985+00:00"},"s":"I",  "c":"CONTROL",  "id":21951,   "ctx":"initandlisten","msg":"Options set by command line","attr":{"options":{"net":{"bindIp":"*"}}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:25.986+00:00"},"s":"I",  "c":"STORAGE",  "id":22270,   "ctx":"initandlisten","msg":"Storage engine to use detected by data files","attr":{"dbpath":"/data/db","storageEngine":"wiredTiger"}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:25.986+00:00"},"s":"I",  "c":"STORAGE",  "id":22315,   "ctx":"initandlisten","msg":"Opening WiredTiger","attr":{"config":"create,cache_size=256713M,session_max=33000,eviction=(threads_min=4,threads_max=4),config_base=false,statistics=(fast),log=(enabled=true,remove=true,path=journal,compressor=snappy),builtin_extension_config=(zstd=(compression_level=6)),file_manager=(close_idle_time=600,close_scan_interval=10,close_handle_minimum=2000),statistics_log=(wait=0),json_output=(error,message),verbose=[recovery_progress:1,checkpoint_progress:1,compact_progress:1,backup:0,checkpoint:0,compact:0,evict:0,history_store:0,recovery:0,rts:0,salvage:0,tiered:0,timestamp:0,transaction:0,verify:0,log:0],prefetch=(available=true,default=false),"}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.440+00:00"},"s":"I",  "c":"WTRECOV",  "id":22430,   "ctx":"initandlisten","msg":"WiredTiger message","attr":{"message":{"ts_sec":1738525586,"ts_usec":440526,"thread":"1:0x7fdb18ecb680","session_name":"txn-recover","category":"WT_VERB_RECOVERY_PROGRESS","category_id":34,"verbose_level":"DEBUG_1","verbose_level_id":1,"msg":"Recovering log 308 through 309"}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.483+00:00"},"s":"I",  "c":"WTRECOV",  "id":22430,   "ctx":"initandlisten","msg":"WiredTiger message","attr":{"message":{"ts_sec":1738525586,"ts_usec":482972,"thread":"1:0x7fdb18ecb680","session_name":"txn-recover","category":"WT_VERB_RECOVERY_PROGRESS","category_id":34,"verbose_level":"DEBUG_1","verbose_level_id":1,"msg":"Recovering log 309 through 309"}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.535+00:00"},"s":"I",  "c":"WTRECOV",  "id":22430,   "ctx":"initandlisten","msg":"WiredTiger message","attr":{"message":{"ts_sec":1738525586,"ts_usec":535402,"thread":"1:0x7fdb18ecb680","session_name":"txn-recover","category":"WT_VERB_RECOVERY_PROGRESS","category_id":34,"verbose_level":"DEBUG_1","verbose_level_id":1,"msg":"Main recovery loop: starting at 308/5632 to 309/256"}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.620+00:00"},"s":"I",  "c":"WTRECOV",  "id":22430,   "ctx":"initandlisten","msg":"WiredTiger message","attr":{"message":{"ts_sec":1738525586,"ts_usec":620444,"thread":"1:0x7fdb18ecb680","session_name":"txn-recover","category":"WT_VERB_RECOVERY_PROGRESS","category_id":34,"verbose_level":"DEBUG_1","verbose_level_id":1,"msg":"Recovering log 308 through 309"}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.671+00:00"},"s":"I",  "c":"WTRECOV",  "id":22430,   "ctx":"initandlisten","msg":"WiredTiger message","attr":{"message":{"ts_sec":1738525586,"ts_usec":671103,"thread":"1:0x7fdb18ecb680","session_name":"txn-recover","category":"WT_VERB_RECOVERY_PROGRESS","category_id":34,"verbose_level":"DEBUG_1","verbose_level_id":1,"msg":"Recovering log 309 through 309"}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.714+00:00"},"s":"I",  "c":"WTRECOV",  "id":22430,   "ctx":"initandlisten","msg":"WiredTiger message","attr":{"message":{"ts_sec":1738525586,"ts_usec":714119,"thread":"1:0x7fdb18ecb680","session_name":"txn-recover","category":"WT_VERB_RECOVERY_PROGRESS","category_id":34,"verbose_level":"DEBUG_1","verbose_level_id":1,"msg":"recovery log replay has successfully finished and ran for 273 milliseconds"}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.714+00:00"},"s":"I",  "c":"WTRECOV",  "id":22430,   "ctx":"initandlisten","msg":"WiredTiger message","attr":{"message":{"ts_sec":1738525586,"ts_usec":714204,"thread":"1:0x7fdb18ecb680","session_name":"txn-recover","category":"WT_VERB_RECOVERY_PROGRESS","category_id":34,"verbose_level":"DEBUG_1","verbose_level_id":1,"msg":"Set global recovery timestamp: (0, 0)"}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.714+00:00"},"s":"I",  "c":"WTRECOV",  "id":22430,   "ctx":"initandlisten","msg":"WiredTiger message","attr":{"message":{"ts_sec":1738525586,"ts_usec":714222,"thread":"1:0x7fdb18ecb680","session_name":"txn-recover","category":"WT_VERB_RECOVERY_PROGRESS","category_id":34,"verbose_level":"DEBUG_1","verbose_level_id":1,"msg":"Set global oldest timestamp: (0, 0)"}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.715+00:00"},"s":"I",  "c":"WTRECOV",  "id":22430,   "ctx":"initandlisten","msg":"WiredTiger message","attr":{"message":{"ts_sec":1738525586,"ts_usec":715139,"thread":"1:0x7fdb18ecb680","session_name":"txn-recover","category":"WT_VERB_RECOVERY_PROGRESS","category_id":34,"verbose_level":"DEBUG_1","verbose_level_id":1,"msg":"recovery rollback to stable has successfully finished and ran for 0 milliseconds"}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.717+00:00"},"s":"I",  "c":"WTCHKPT",  "id":22430,   "ctx":"initandlisten","msg":"WiredTiger message","attr":{"message":{"ts_sec":1738525586,"ts_usec":717071,"thread":"1:0x7fdb18ecb680","session_name":"WT_SESSION.checkpoint","category":"WT_VERB_CHECKPOINT_PROGRESS","category_id":7,"verbose_level":"DEBUG_1","verbose_level_id":1,"msg":"saving checkpoint snapshot min: 1, snapshot max: 1 snapshot count: 0, oldest timestamp: (0, 0) , meta checkpoint timestamp: (0, 0) base write gen: 21155"}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.728+00:00"},"s":"I",  "c":"WTRECOV",  "id":22430,   "ctx":"initandlisten","msg":"WiredTiger message","attr":{"message":{"ts_sec":1738525586,"ts_usec":728355,"thread":"1:0x7fdb18ecb680","session_name":"txn-recover","category":"WT_VERB_RECOVERY_PROGRESS","category_id":34,"verbose_level":"DEBUG_1","verbose_level_id":1,"msg":"recovery checkpoint has successfully finished and ran for 13 milliseconds"}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.728+00:00"},"s":"I",  "c":"WTRECOV",  "id":22430,   "ctx":"initandlisten","msg":"WiredTiger message","attr":{"message":{"ts_sec":1738525586,"ts_usec":728407,"thread":"1:0x7fdb18ecb680","session_name":"txn-recover","category":"WT_VERB_RECOVERY_PROGRESS","category_id":34,"verbose_level":"DEBUG_1","verbose_level_id":1,"msg":"recovery was completed successfully and took 288ms, including 273ms for the log replay, 0ms for the rollback to stable, and 13ms for the checkpoint."}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.731+00:00"},"s":"I",  "c":"STORAGE",  "id":4795906, "ctx":"initandlisten","msg":"WiredTiger opened","attr":{"durationMillis":745}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.731+00:00"},"s":"I",  "c":"RECOVERY", "id":23987,   "ctx":"initandlisten","msg":"WiredTiger recoveryTimestamp","attr":{"recoveryTimestamp":{"$timestamp":{"t":0,"i":0}}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.743+00:00"},"s":"W",  "c":"CONTROL",  "id":22120,   "ctx":"initandlisten","msg":"Access control is not enabled for the database. Read and write access to data and configuration is unrestricted","tags":["startupWarnings"]}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.744+00:00"},"s":"W",  "c":"CONTROL",  "id":9068900, "ctx":"initandlisten","msg":"For customers running the current memory allocator, we suggest changing the contents of the following sysfsFile","attr":{"allocator":"tcmalloc-google","sysfsFile":"/sys/kernel/mm/transparent_hugepage/defrag","currentValue":"madvise","desiredValue":"defer+madvise"},"tags":["startupWarnings"]}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.744+00:00"},"s":"W",  "c":"CONTROL",  "id":8640302, "ctx":"initandlisten","msg":"We suggest setting the contents of sysfsFile to 0.","attr":{"sysfsFile":"/sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none","currentValue":511},"tags":["startupWarnings"]}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.744+00:00"},"s":"W",  "c":"CONTROL",  "id":8718500, "ctx":"initandlisten","msg":"Your system has glibc support for rseq built in, which is not yet supported by tcmalloc-google and has critical performance implications. Please set the environment variable GLIBC_TUNABLES=glibc.pthread.rseq=0","tags":["startupWarnings"]}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.744+00:00"},"s":"W",  "c":"NETWORK",  "id":5123300, "ctx":"initandlisten","msg":"vm.max_map_count is too low","attr":{"currentValue":65530,"recommendedMinimum":419430,"maxConns":209715},"tags":["startupWarnings"]}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.744+00:00"},"s":"W",  "c":"CONTROL",  "id":8386700, "ctx":"initandlisten","msg":"We suggest setting swappiness to 0 or 1, as swapping can cause performance problems.","attr":{"sysfsFile":"/proc/sys/vm/swappiness","currentValue":10},"tags":["startupWarnings"]}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.745+00:00"},"s":"I",  "c":"NETWORK",  "id":4915702, "ctx":"initandlisten","msg":"Updated wire specification","attr":{"oldSpec":{"incomingExternalClient":{"minWireVersion":0,"maxWireVersion":25},"incomingInternalClient":{"minWireVersion":0,"maxWireVersion":25},"outgoing":{"minWireVersion":6,"maxWireVersion":25},"isInternalClient":true},"newSpec":{"incomingExternalClient":{"minWireVersion":0,"maxWireVersion":25},"incomingInternalClient":{"minWireVersion":25,"maxWireVersion":25},"outgoing":{"minWireVersion":25,"maxWireVersion":25},"isInternalClient":true}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.745+00:00"},"s":"I",  "c":"REPL",     "id":5853300, "ctx":"initandlisten","msg":"current featureCompatibilityVersion value","attr":{"featureCompatibilityVersion":"8.0","context":"startup"}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.745+00:00"},"s":"I",  "c":"STORAGE",  "id":5071100, "ctx":"initandlisten","msg":"Clearing temp directory"}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.751+00:00"},"s":"I",  "c":"CONTROL",  "id":6608200, "ctx":"initandlisten","msg":"Initializing cluster server parameters from disk"}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.751+00:00"},"s":"I",  "c":"CONTROL",  "id":20536,   "ctx":"initandlisten","msg":"Flow Control is enabled on this deployment"}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.752+00:00"},"s":"I",  "c":"FTDC",     "id":20625,   "ctx":"initandlisten","msg":"Initializing full-time diagnostic data capture","attr":{"dataDirectory":"/data/db/diagnostic.data"}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.753+00:00"},"s":"I",  "c":"REPL",     "id":6015317, "ctx":"initandlisten","msg":"Setting new configuration state","attr":{"newState":"ConfigReplicationDisabled","oldState":"ConfigPreStart"}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.753+00:00"},"s":"I",  "c":"STORAGE",  "id":22262,   "ctx":"initandlisten","msg":"Timestamp monitor starting"}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.753+00:00"},"s":"I",  "c":"STORAGE",  "id":7333401, "ctx":"initandlisten","msg":"Starting the DiskSpaceMonitor"}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.754+00:00"},"s":"I",  "c":"NETWORK",  "id":23015,   "ctx":"listener","msg":"Listening on","attr":{"address":"/tmp/mongodb-27017.sock"}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.754+00:00"},"s":"I",  "c":"NETWORK",  "id":23015,   "ctx":"listener","msg":"Listening on","attr":{"address":"0.0.0.0:27017"}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.754+00:00"},"s":"I",  "c":"NETWORK",  "id":23016,   "ctx":"listener","msg":"Waiting for connections","attr":{"port":27017,"ssl":"off"}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:26.754+00:00"},"s":"I",  "c":"CONTROL",  "id":8423403, "ctx":"initandlisten","msg":"mongod startup complete","attr":{"Summary of time elapsed":{"Startup from clean shutdown?":true,"Statistics":{"Set up periodic runner":"0 ms","Set up online certificate status protocol manager":"0 ms","Transport layer setup":"0 ms","Run initial syncer crash recovery":"0 ms","Create storage engine lock file in the data directory":"0 ms","Get metadata describing storage engine":"0 ms","Validate options in metadata against current startup options":"0 ms","Create storage engine":"745 ms","Write current PID to file":"10 ms","Initialize FCV before rebuilding indexes":"1 ms","Drop abandoned idents and get back indexes that need to be rebuilt or builds that need to be restarted":"0 ms","Rebuild indexes for collections":"0 ms","Load cluster parameters from disk for a standalone":"0 ms","Build user and roles graph":"0 ms","Set up the background thread pool responsible for waiting for opTimes to be majority committed":"1 ms","Start up the replication coordinator":"0 ms","Ensure the change stream collections on startup contain consistent data":"0 ms","Write startup options to the audit log":"0 ms","Start transport layer":"0 ms","_initAndListen total elapsed time":"769 ms"}}}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:27.005+00:00"},"s":"W",  "c":"CONTROL",  "id":636300,  "ctx":"ftdc","msg":"Use of deprecated server parameter name","attr":{"deprecatedName":"internalQueryCacheSize","canonicalName":"internalQueryCacheMaxEntriesPerCollection"}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:27.005+00:00"},"s":"W",  "c":"CONTROL",  "id":636300,  "ctx":"ftdc","msg":"Use of deprecated server parameter name","attr":{"deprecatedName":"oplogSamplingLogIntervalSeconds","canonicalName":"collectionSamplingLogIntervalSeconds"}}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:27.005+00:00"},"s":"W",  "c":"NETWORK",  "id":23803,   "ctx":"ftdc","msg":"Use of deprecated server parameter 'sslMode', please use 'tlsMode' instead."}
+[1;32m[mongodb]  |[0m {"t":{"$date":"2025-02-02T19:46:27.005+00:00"},"s":"W",  "c":"CONTROL",  "id":636300,  "ctx":"ftdc","msg":"Use of deprecated server parameter npodman start -a twon_simulations_frontend_1
+Fetching get All Users
+Fetching get All Users
+Fetching get All Users
+Fetching get All Users
+Fetching posts per users with ranking less than 10
+Fetching posts per users
+Fetching get All Users
+Fetching posts per users
+Fetching get All Users
+Fetching get All Users
+Fetching get All Users
+Fetching posts per users with ranking less than 10
+Fetching get All Users
+Fetching get All Users
+Traceback (most recent call last):
+  File "/usr/bin/podman-compose", line 11, in <module>
+    load_entry_point('podman-compose==1.0.6', 'console_scripts', 'podman-compose')()
+  File "/usr/lib/python3.6/site-packages/podman_compose.py", line 2940, in main
+    podman_compose.run()
+  File "/usr/lib/python3.6/site-packages/podman_compose.py", line 1422, in run
+    cmd(self, args)
+  File "/usr/lib/python3.6/site-packages/podman_compose.py", line 1753, in wrapped
+    return func(*args, **kw)
+  File "/usr/lib/python3.6/site-packages/podman_compose.py", line 2116, in compose_up
+    thread.join(timeout=1.0)
+  File "/usr/lib64/python3.6/threading.py", line 1063, in join
+    self._wait_for_tstate_lock(timeout=max(timeout, 0))
+  File "/usr/lib64/python3.6/threading.py", line 1075, in _wait_for_tstate_lock
+    elif lock.acquire(block, timeout):
+KeyboardInterrupt
+Error: unable to start container 5e274ade8e2904c3df0af5c8490c403ce4d5433d7315f37d01a48fd4edc99b7a: error attaching to container 5e274ade8e2904c3df0af5c8490c403ce4d5433d7315f37d01a48fd4edc99b7a: write /dev/stdout: broken pipe
+Fetching posts per users
+Fetching get All Users
+Fetching get All Users
+Fetching get All Users
+Fetching get All Users
+Fetching posts per users with ranking less than 10
+Error: unable to start container e4c8c83e8e07b36295cfd8d55d7740db1587702bdee1ca10b060e99dacbaa6ce: error attaching to container e4c8c83e8e07b36295cfd8d55d7740db1587702bdee1ca10b060e99dacbaa6ce: write /dev/stdout: broken pipe
+npm ERR! path /app
+npm ERR! command failed
+npm ERR! signal SIGTERM
+npm ERR! command sh -c vite --host 0.0.0.0
+
+npm ERR! A complete log of this run can be found in: /root/.npm/_logs/2025-02-02T19_46_28_081Z-debug-0.log
+Error: unable to start container b0a5ae5511da436d592458c7daacf3cf4e2749a9ce986da092ce3b1017faf921: error attaching to container b0a5ae5511da436d592458c7daacf3cf4e2749a9ce986da092ce3b1017faf921: read unixpacket @->/proc/self/fd/13/attach: read: connection reset by peer

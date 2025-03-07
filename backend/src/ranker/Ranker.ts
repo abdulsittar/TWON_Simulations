@@ -1,10 +1,11 @@
-import { Post, computePostFields } from './Post';
+import { Ranking_Post, computePostFields } from './Ranking_Post';
 import { Decay } from './Decay';
 import { Engagement } from './Engagement';
 import { Noise } from './Noise';
+import  responseLogger  from '../utils/logs/logger';
 
 interface Request {
-  items: Post[];
+  items: Ranking_Post[];
   mode: 'random' | 'chronological' | 'ranked';
   referenceDatetime: Date;
   decay: Decay;
@@ -45,8 +46,10 @@ export class Ranker {
     };
   }
 
-  private computePostScore(req: Request, post: Post): number {
+  private computePostScore(req: Request, post: Ranking_Post): number {
     computePostFields(post);
+    
+    
 
     if (req.mode === 'random') {
       return Math.random();
@@ -64,12 +67,13 @@ export class Ranker {
       req.weights.reposts *
         req.engagement.calculate(post.reposts, req.referenceDatetime, req.decay),
       req.weights.comments *
-        req.engagement.calculate(post.commentsTimestamp, req.referenceDatetime, req.decay),
+        req.engagement.calculate(post.comments, req.referenceDatetime, req.decay),
       req.weights.commentsLikes *
         req.engagement.calculate(post.commentsLikes, req.referenceDatetime, req.decay),
       req.weights.commentsDislikes *
         req.engagement.calculate(post.commentsDislikes, req.referenceDatetime, req.decay),
     ];
+    //responseLogger.debug(`Post Rank: ${observations}`);
 
     return (
       req.noise.generate() *

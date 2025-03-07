@@ -1,7 +1,7 @@
 import { IsEnum, IsString } from 'class-validator';
 import { config } from 'dotenv';
-import { OpenAIClient } from 'openai'; // Use a relevant OpenAI client library
-import { Together } from 'together'; // Use a relevant Together client library
+//import { OpenAIClient } from 'openai'; // Use a relevant OpenAI client library
+//import { Together } from 'together'; // Use a relevant Together client library
 
 config(); // Load environment variables from .env file
 

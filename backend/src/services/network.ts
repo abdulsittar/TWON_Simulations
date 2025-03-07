@@ -74,7 +74,7 @@ export const processUsersAndGenerateGraph = async (
     const graph = generateRandomGraph(model, numOfUsers, m);
 
     await saveUsersToDatabase(db, users, graph);
-    responseLogger.info("Successfully completed!");
+    responseLogger.debug("Successfully completed!");
 };
 
 const fetchUsers = async (db: Db, count: number): Promise<IUser[]> => {

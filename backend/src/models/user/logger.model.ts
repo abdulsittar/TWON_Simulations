@@ -9,7 +9,7 @@ export interface ILogger {
 export class SimpleLogger implements ILogger {
    logEvent(message: string): void {
     console.log(message); // Example implementation
-    responseLogger.info(message);
+    responseLogger.debug(message);
    }
  }
   

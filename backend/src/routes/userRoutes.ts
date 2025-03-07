@@ -8,7 +8,16 @@ router.get('/users/getAllUsers', UserController.getAllUsers); // Fetch all users
 router.get('/users/get_totalTime', UserController.get_totalTime);
 router.get('/users/get_replenishTime', UserController.get_replenishTime);
 router.get('/users/get_usedTime', UserController.get_usedTime);
-// New routes
+router.get('/users/latestAnalytics', UserController.latestAnalytics);
+router.get('/users/latestUserActions', UserController.latestUserActions);
+
+router.get('/users/latestAnalyticsMotivation', UserController.latestAnalyticsMotivation);
+router.get('/users/latestAnalyticsTB', UserController.latestAnalyticsTB);
+router.get('/users/latestUserActionsRanking', UserController.latestUserActionsRanking);
+router.get('/users/latestUserActionsInteraction', UserController.latestUserActionsInteraction);
+
+
+// New routeslatestUserActionsInteraction
 router.post('/create', UserController.createUser); // Route to create a new user
 router.put('/update/:id', UserController.updateUser); // Route to update a user by ID
 

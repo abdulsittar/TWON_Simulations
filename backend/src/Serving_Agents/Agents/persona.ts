@@ -33,6 +33,7 @@ class Persona {
       ],
     },
   };
+    static jsonSchemaExtra: any;
 
   constructor(
     id: string,
