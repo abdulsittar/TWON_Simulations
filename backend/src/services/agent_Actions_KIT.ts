@@ -91,7 +91,7 @@ const totalAgents = process.env.num_of_agents;
 const posting_model = "abdulsittar72/TWON-Agent-OSN-Post-en"; 
 const replying_model = "abdulsittar72/TWON-Agent-OSN-Replies-en";
 
-export const performAgentAction = async (agent: IUser, actionType: number, post?: IPost) => {
+export const performAgentAction = async (agent: IUser, actionType: number) => {
   let actionName = "";
   let postId = null;
   var startTime = 0;
@@ -113,15 +113,20 @@ export const performAgentAction = async (agent: IUser, actionType: number, post?
       const posId = ""; 
       startTime = performance.now(); 
       
-      if (post) {
-        postId = await agent_Reply_Comment_Loop(agent, post._id as mongoose.Types.ObjectId); 
-        actionName = "comment"; 
-        endTime = performance.now(); 
-        console.log(`Performing action with post:`, post);
-    } else {
-        // Handle the case where no post is provided
-        console.log(`Performing action without a post`);
+      const posts = await Post.find().sort({ createdAt: -1 });
+      const topPost = posts[0]
+      
+      let post_id: mongoose.Types.ObjectId;
+
+      if (topPost._id instanceof mongoose.Types.ObjectId) {
+        post_id = topPost._id; // Already an ObjectId, no need for conversion
+      } else {
+        post_id = new mongoose.Types.ObjectId(topPost._id.toString()); // Convert string to ObjectId
       }
+      
+      postId = await agent_Reply_Comment_Loop(agent, post_id); 
+      actionName = "comment"; 
+      endTime = performance.now(); 
       //responseLogger.info(`agent_Reply_Comment_Loop --- Execution time: ${(endTime - startTime) / 1000} seconds`); 
       break;
       
@@ -746,7 +751,7 @@ export async function getFollowingsAndFollowers(agentUserId: string): Promise<Ar
       await post.save();
       responseLogger.info("The post has been added");
       await SimulationService.updateTimeBudget(agent, 20);
-      responseLogger.info(`Final 1111 `);
+      //responseLogger.info(`Final 1111 `);
       await saveUserAction(agent.username, "post", "");
       responseLogger.info("saveUserAction  post");
       const timeBudget = await TimeBudget.findById(agent.timeBudget);
@@ -847,7 +852,7 @@ export async function addAComment(agent: IUser, desc: string, userId: string, po
           await post.updateOne({ $push: { comments: comment._id } });
         }
         responseLogger.info("The comment has been added");
-        responseLogger.info(`Final 1111 `);
+        //responseLogger.info(`Final 1111 `);
         await saveUserAction(agent.username, "comment", postId);
         responseLogger.info("saveUserAction  comment");
         if (post?.postedBy) {

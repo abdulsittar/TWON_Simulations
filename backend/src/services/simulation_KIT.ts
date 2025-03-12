@@ -1,7 +1,7 @@
 import { Server as SocketServer } from 'socket.io';
 import { getAllAgents } from './database_service';
 import { emitChartData } from './chart_service';
-import { performAgentAction } from './agent_Actions';
+import { performAgentAction } from './agent_Actions_KIT';
 
 
 export class SimulationService {
@@ -15,7 +15,6 @@ export class SimulationService {
     let agents = await getAllAgents();
     if (agents.length === 0) return;
     const totalAgents = agents.length;
-
 
     //for (let i = 0; i < 3; i++) {
       //await performAgentAction(agents[i], 0);

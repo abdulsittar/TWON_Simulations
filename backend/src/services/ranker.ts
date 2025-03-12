@@ -69,6 +69,10 @@ const processComments = (comments: IComment[]): Array<{ id: string; likes: Date[
         .populate('comments')
         .lean()
         .exec(); 
+        
+      responseLogger.info("Ranked total posts", posts.length);
+      responseLogger.info(posts.length);
+        
       const items: Ranking_Post[] = posts.map((post) => {
         // Ensure reposts, likes, and dislikes are typed correctly
         const reposts = post.reposts as { createdAt: Date }[];
@@ -142,7 +146,7 @@ const processComments = (comments: IComment[]): Array<{ id: string; likes: Date[
     responseLogger.info("Error fetching or ranking posts:", error);
   } finally {
    // mongoose.connection.close();
-    //responseLogger.log("Database connection closed.");
+    responseLogger.info("Database connection closed.");
   }
 };
 
