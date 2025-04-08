@@ -10,6 +10,8 @@ router.get('/users/get_replenishTime', UserController.get_replenishTime);
 router.get('/users/get_usedTime', UserController.get_usedTime);
 router.get('/users/latestAnalytics', UserController.latestAnalytics);
 router.get('/users/latestUserActions', UserController.latestUserActions);
+router.get('/users/listDatabases', UserController.listAllDatabases);
+
 
 router.get('/users/latestAnalyticsMotivation', UserController.latestAnalyticsMotivation);
 router.get('/users/latestAnalyticsTB', UserController.latestAnalyticsTB);

@@ -19,6 +19,9 @@ const TopDealsBox = () => {
     queryKey: ['topdeals'],
     queryFn: getAllUsers,
   });
+  
+  
+  
 
   return (
     <div className="w-full p-0 m-0 flex flex-col items-stretch gap-6 xl:gap-4 2xl:gap-9">

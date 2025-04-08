@@ -3,9 +3,9 @@ import { MultiGraph } from "graphology"; // Import MultiGraph
 import { User } from "../models/user/user.model"; // Import your User model
 import randomLayout from "graphology-layout/random";
 
-import { createCanvas } from "canvas";
+//import { createCanvas } from "canvas";
 import fs from "fs";
-import { Sigma } from "sigma";
+//import { Sigma } from "sigma";
 import  Graph from "graphology";
 //import { renderToStaticMarkup } from "react-dom/server";
 import { exec } from "child_process";

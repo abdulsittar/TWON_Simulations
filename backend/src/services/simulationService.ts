@@ -68,8 +68,12 @@ if (typeof k === 'string') {
 }*/
 
 
-//const client = new Together({ apiKey });
-const client = new Together(apiKey);
+const client = new Together({ apiKey });
+//const client = new Together(apiKey);
+
+
+
+//const client = new Together(apiKey);
 
 const model = process.env.model;
 const provider = process.env.provider;

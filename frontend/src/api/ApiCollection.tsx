@@ -16,6 +16,16 @@ export const fetchTotalTime = async () => {
 };
 
 
+export const getAllDatabases = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/users/listDatabases`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching databases:', error);
+    throw error;
+  }
+};
+
 export const getAllUsers = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/users/getAllUsers`); 

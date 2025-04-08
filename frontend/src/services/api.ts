@@ -11,6 +11,22 @@ import { IInteractions } from "../types/IInteractions";
 
 const API_BASE_URL = "http://localhost:5000";
 
+export const connectToDatabase = async (databaseName: string): Promise<void> => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/users/connect`, { databaseName });
+    
+    if (response.status === 200) {
+      console.log(`Successfully connected to database: ${databaseName}`);
+    } else {
+      console.error('Failed to connect to the database:', response.data);
+    }
+  } catch (error) {
+    console.error('Error connecting to database:', error);
+    throw error;
+  }
+};
+
+
 export const fetchAnalyticsData = async (): Promise<IAnalytics | null> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/users/latestAnalytics`);

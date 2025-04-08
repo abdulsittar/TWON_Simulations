@@ -91,7 +91,7 @@ const totalAgents = process.env.num_of_agents;
 const posting_model = "abdulsittar72/TWON-Agent-OSN-Post-en"; 
 const replying_model = "abdulsittar72/TWON-Agent-OSN-Replies-en";
 
-export const performAgentAction = async (agent: IUser, actionType: number) => {
+export const performAgentAction = async (agent: IUser, actionType: number, post?: IPost) => {
   let actionName = "";
   let postId = null;
   var startTime = 0;
