@@ -12,6 +12,9 @@ router.get('/users/latestAnalytics', UserController.latestAnalytics);
 router.get('/users/latestUserActions', UserController.latestUserActions);
 router.get('/users/listDatabases', UserController.listAllDatabases);
 
+router.get('/users/getUsersData', UserController.getUsersData);
+router.get('/users/getPosts', UserController.getPosts);
+router.get('/users/getComments', UserController.getComments);
 
 router.get('/users/latestAnalyticsMotivation', UserController.latestAnalyticsMotivation);
 router.get('/users/latestAnalyticsTB', UserController.latestAnalyticsTB);

@@ -61,6 +61,10 @@ app.post("/users/latestAnalytics", UserController.latestAnalytics);
 app.post("/users/latestUserActions", UserController.latestUserActions);
 app.post("/users/connect", UserController.connectToDatabase);
 
+app.post("/users/getUsersData", UserController.getUsersData);
+app.post("/users/getComments", UserController.getComments);
+app.post("/users/getPosts", UserController.getPosts);
+
 app.post("/posts/createPost", PostController.createPost);
 app.post("/posts/get_postsPerUser", PostController.get_postsPerUser);
 app.post("/posts/get_postsPerUserWithLowRanking", PostController.get_postsPerUserWithLowRanking);

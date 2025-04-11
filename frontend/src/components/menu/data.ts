@@ -16,21 +16,21 @@ export const menu = [
       },
       {
         isLink: true,
-        url: '/',
-        icon: HiMiniWrenchScrewdriver ,
-        label: 'Ranker Settings',
-      },
-      {
-        isLink: true,
-        url: '/',
+        url: '/Simulations',
         icon: HiCalculator ,
-        label: 'Agents Life',
+        label: 'Analysis',
       },
       {
         isLink: true,
-        url: '/',
+        url: '/View_Data',
         icon: HiChatBubbleLeftEllipsis ,
         label: 'Data',
+      },
+      {
+        isLink: true,
+        url: '/Ranker',
+        icon: HiMiniWrenchScrewdriver ,
+        label: 'Ranker Settings',
       },
     ],
   }

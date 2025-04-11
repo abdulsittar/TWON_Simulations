@@ -380,7 +380,7 @@ const processAndSetData = (
   }, []);
 
   return (
-    <div className="p-4">
+    <div className="p-4 max-w-6xl mx-auto">
       
       {/* Select Database Section */}
       <div className="mb-4 bg-gray-100 p-4 border border-blue-400 rounded-lg">

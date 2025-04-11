@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../models/user/user.model";
+import { Post } from "../models/content/post.model";
+import { Comment } from "../models/content/comment.model";
 import { TimeBudget } from "../models/user/timeBudget.model"; // Assuming TimeBudget model exists
 import { AMCDOpinionModel } from "../models/user/opinion.model";
 import { SimpleLogger } from "../models/user/logger.model";
@@ -16,6 +18,64 @@ import  responseLogger  from '../utils/logs/logger';
 
 
 export class UserController {
+
+
+  static async getUsersData(req: Request, res: Response) { 
+    try { 
+      const users = await User.find().populate("timeBudget"); // Populate timeBudget if it's a reference
+      
+      const formattedUsers = users.map((user, index) => ({
+        id: index + 1,
+        _id: user._id,
+        img: "https://images.pexels.com/photos/8405873/pexels-photo-8405873.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load", // You can replace this with user-specific image URLs if available
+        username: user.username || "Unknown User", // Adjust based on your schema
+        party: user.name || "Unknown User", // Adjust based on your schema
+        email: user.email || "No Email", // Adjust based on your schema
+        amount: (Math.random() * 5).toFixed(3), // Example to generate random amounts
+      }));
+      
+      res.status(200).json(formattedUsers);
+    } catch (error) {
+      console.error("Not connected to the new database", error);
+      responseLogger.info(`agentFeatures.length && actionLabels.length and result is`, error);
+      res.status(500).json({ error: "Error fetching users" });
+    }
+  }
+  
+  
+  static async getPosts(req: Request, res: Response) { 
+    try { 
+      console.error("Fetching get All Users");
+      const posts = await Post.find(); 
+      const formatted = posts.map((post) => ({
+        ...post.toObject(),
+        id: post._id,
+      }));
+
+      res.status(200).json(formatted);
+    } catch (error) {
+      console.error("Not connected to the new database", error);
+      responseLogger.info(`agentFeatures.length && actionLabels.length and result is`, error);
+      res.status(500).json({ error: "Error fetching users" });
+    }
+  }
+  
+  static async getComments(req: Request, res: Response) {
+    try {
+      const comments = await Comment.find();
+      const formatted = comments.map((comment) => ({
+        ...comment.toObject(),
+        id: comment._id,
+      }));
+      res.status(200).json(formatted);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      res.status(500).json({ error: "Error fetching users" });
+    }
+  }
+
+
+
   // Create a new user
   static async createUser(req: Request, res: Response) {
     try {

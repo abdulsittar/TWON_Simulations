@@ -19,6 +19,7 @@ interface DataTableProps {
   rows: object[];
   slug: string;
   includeActionColumn: boolean;
+  getRowId?: (row: any) => string | number;
 }
 
 const DataTable: React.FC<DataTableProps> = ({

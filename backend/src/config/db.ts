@@ -10,10 +10,8 @@ const connectDB = async (databaseName?: string) => {
         await mongoose.disconnect();  // Disconnect the previous connection
       }
     
-    
       let mongoUri = ENV.MONGO_URI;
-
-      
+  
     // If a database name is provided, use it, otherwise use the default URI from ENV
     if (databaseName && databaseName !== "") {
       mongoUri = ENV.MONGO_URI.replace(/\/([^/?]+)(?=\?)/, `/${databaseName}`);

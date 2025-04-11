@@ -3,6 +3,50 @@ import axios from 'axios';
 const API_BASE_URL = 'http://localhost:5000';  // Update with your backend URL
 
 // Function to fetch total time
+export const getUsersData = async () => {
+  try {
+    //const response = await axios.get(`${API_BASE_URL}simulation/startSimulation`);//total-Time`);
+    const response = await axios.get(`${API_BASE_URL}/users/getUsersData`);
+    console.log(response.data);  // This should log the formatted data
+    return response.data;  // Return the formatted data
+  } catch (error) {
+    console.error('Error fetching total time:', error);
+    throw error;
+  }
+};
+
+
+// Function to fetch total time
+export const getPosts = async () => {
+  try {
+    //const response = await axios.get(`${API_BASE_URL}simulation/startSimulation`);//total-Time`);
+    const response = await axios.get(`${API_BASE_URL}/users/getPosts`);
+    console.log(response.data);  // This should log the formatted data
+    return response.data;  // Return the formatted data
+  } catch (error) {
+    console.error('Error fetching total time:', error);
+    throw error;
+  }
+};
+
+
+// Function to fetch total time
+export const getComments = async () => {
+  try {
+    //const response = await axios.get(`${API_BASE_URL}simulation/startSimulation`);//total-Time`);
+    const response = await axios.get(`${API_BASE_URL}/users/getComments`);
+    console.log(response.data);  // This should log the formatted data
+    return response.data;  // Return the formatted data
+  } catch (error) {
+    console.error('Error fetching total time:', error);
+    throw error;
+  }
+};
+
+
+
+
+// Function to fetch total time
 export const fetchTotalTime = async () => {
   try {
     //const response = await axios.get(`${API_BASE_URL}simulation/startSimulation`);//total-Time`);
