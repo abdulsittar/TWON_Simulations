@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../models/user/user.model";
+import { Post } from "../models/content/post.model";
+import { Comment } from "../models/content/comment.model";
 import { TimeBudget } from "../models/user/timeBudget.model"; // Assuming TimeBudget model exists
 import { AMCDOpinionModel } from "../models/user/opinion.model";
 import { SimpleLogger } from "../models/user/logger.model";
@@ -10,8 +12,70 @@ import { TimeBudgetAnalytics } from "../models/content/timebudgetAna.model";
 import { Actions } from "../models/content/actions.model";
 import { RanAct } from "../models/content/rankAna.model";
 import { IntAct } from "../models/content/interAna.model";
+import mongoose from 'mongoose'; 
+import connectDB from "../config/db";
+import  responseLogger  from '../utils/logs/logger';
+
 
 export class UserController {
+
+
+  static async getUsersData(req: Request, res: Response) { 
+    try { 
+      const users = await User.find().populate("timeBudget"); // Populate timeBudget if it's a reference
+      
+      const formattedUsers = users.map((user, index) => ({
+        id: index + 1,
+        _id: user._id,
+        img: "https://images.pexels.com/photos/8405873/pexels-photo-8405873.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load", // You can replace this with user-specific image URLs if available
+        username: user.username || "Unknown User", // Adjust based on your schema
+        party: user.name || "Unknown User", // Adjust based on your schema
+        email: user.email || "No Email", // Adjust based on your schema
+        amount: (Math.random() * 5).toFixed(3), // Example to generate random amounts
+      }));
+      
+      res.status(200).json(formattedUsers);
+    } catch (error) {
+      console.error("Not connected to the new database", error);
+      responseLogger.info(`agentFeatures.length && actionLabels.length and result is`, error);
+      res.status(500).json({ error: "Error fetching users" });
+    }
+  }
+  
+  
+  static async getPosts(req: Request, res: Response) { 
+    try { 
+      console.error("Fetching get All Users");
+      const posts = await Post.find(); 
+      const formatted = posts.map((post) => ({
+        ...post.toObject(),
+        id: post._id,
+      }));
+
+      res.status(200).json(formatted);
+    } catch (error) {
+      console.error("Not connected to the new database", error);
+      responseLogger.info(`agentFeatures.length && actionLabels.length and result is`, error);
+      res.status(500).json({ error: "Error fetching users" });
+    }
+  }
+  
+  static async getComments(req: Request, res: Response) {
+    try {
+      const comments = await Comment.find();
+      const formatted = comments.map((comment) => ({
+        ...comment.toObject(),
+        id: comment._id,
+      }));
+      res.status(200).json(formatted);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      res.status(500).json({ error: "Error fetching users" });
+    }
+  }
+
+
+
   // Create a new user
   static async createUser(req: Request, res: Response) {
     try {
@@ -68,7 +132,13 @@ export class UserController {
   }
 
   static async getAllUsers(req: Request, res: Response) {
-    try {
+    //const { databaseName } = req.body; // Database name selected by the frontend
+
+    //if (databaseName) {
+    //  await connectDB(databaseName);  // Connect to the provided database
+    //}
+  
+    try { 
       console.error("Fetching get All Users");
       const users = await User.find().populate("timeBudget"); // Populate timeBudget if it's a reference
       
@@ -86,6 +156,24 @@ export class UserController {
       res.status(500).json({ error: "Error fetching users" });
     }
   }
+
+  static async connectToDatabase(req: Request, res: Response) {
+    const { databaseName } = req.body;
+    
+    try { 
+      await connectDB(databaseName);
+      // Define the response structure
+      const response = { "success": "yes" };
+      console.log("Connected to the new database");
+      responseLogger.info(`agentFeatures.length && actionLabels.length and result is`);
+      res.status(200).json(response);
+    } catch (error) {
+      console.error("Not connected to the new database", error);
+      responseLogger.info(`agentFeatures.length && actionLabels.length and result is`, error);
+      res.status(500).json({ error: "Error fetching users" });
+    }
+  }
+
 
   static async get_totalTime(req: Request, res: Response) {
     try {
@@ -112,6 +200,28 @@ export class UserController {
     } catch (error) {
       console.error("Error fetching users:", error);
       res.status(500).json({ error: "Error fetching users" });
+    }
+  }
+  
+  
+  static async listAllDatabases(req: Request, res: Response) {
+    try {
+      if (mongoose.connection.readyState !== 1) {
+        return res.status(500).json({ error: "MongoDB is not connected" });
+      }
+      const db = mongoose.connection.db;
+      if (!db) {
+        return res.status(500).json({ error: "Database object not initialized" });
+      }
+      const admin = db.admin();
+  
+      const result = await admin.listDatabases();
+      const dbNames = result.databases.map(db => db.name);
+  
+      res.status(200).json(dbNames);
+    } catch (error) {
+      console.error("Error listing databases:", error);
+      res.status(500).json({ error: "Failed to list databases" });
     }
   }
   
@@ -194,7 +304,91 @@ export class UserController {
     }
   }
   
-static async latestAnalytics(req: Request, res: Response) {
+  
+  static async latestAnalytics(req: Request, res: Response) {
+    try {
+      const latestData = await Analytics.findOne().sort({ date: -1 });
+  
+      if (!latestData) {
+        return res.status(404).json({ error: "No analytics data found" });
+      }
+  
+      const seen = new Set();
+  
+      const activityData = latestData.userActivity
+        .map(entry => {
+          const date = new Date(entry.time);
+          const formattedTime = date.toISOString().slice(0, 16).replace('T', ' '); // "YYYY-MM-DD HH:MM"
+          
+          return {
+            time: formattedTime,
+            user: entry.user,
+            status: entry.status,
+            action: entry.action
+          };
+        })
+        .filter(entry => {
+          const key = `${entry.time}-${entry.user}`; // ✅ Unique per user per minute
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+  
+      res.status(200).json({
+        userActivity: activityData,
+        featureUsage: latestData.featureUsage,
+        heatmapData: latestData.heatmapData,
+      });
+    } catch (error) {
+      console.error("Error fetching analytics data:", error);
+      res.status(500).json({ error: "Error fetching analytics data" });
+    }
+  }
+  
+  
+  
+  
+  static async latestAnalytics3(req: Request, res: Response) {
+    try {
+      const latestData = await Analytics.findOne().sort({ date: -1 });
+  
+      if (!latestData) {
+        return res.status(404).json({ error: "No analytics data found" });
+      }
+  
+      // ✅ Extract user activity data for line chart without duplicates
+      const seen = new Set();
+      const activityData = latestData.userActivity
+        .map(entry => {
+          // Remove seconds from time (assumes string or Date object)
+          const date = new Date(entry.time);
+          const formattedTime = date.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:MM"
+          return {
+            time: formattedTime,
+            user: entry.user,
+            status: entry.status
+          };
+        })
+        .filter(entry => {
+          const key = `${entry.time}-${entry.user}-${entry.status}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+  
+      res.status(200).json({
+        userActivity: activityData,
+        featureUsage: latestData.featureUsage,
+        heatmapData: latestData.heatmapData,
+      });
+    } catch (error) {
+      console.error("Error fetching analytics data:", error);
+      res.status(500).json({ error: "Error fetching analytics data" });
+    }
+  }
+  
+  
+static async latestAnalytics2(req: Request, res: Response) {
   try {
     const latestData = await Analytics.findOne().sort({ date: -1 });
 

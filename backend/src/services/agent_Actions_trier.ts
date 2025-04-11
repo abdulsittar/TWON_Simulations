@@ -77,14 +77,8 @@ let k: string | { apiKey: string };
   together = new Together(k.apiKey); // Pass string from k.apiKey if k is an object
 }*/
 
-
-
-const together = new Together({ apiKey });
-
-
-
-
-//const together = new Together(apiKey); 
+//const together = new Together({ apiKey });
+const together = new Together(apiKey); 
  
 const model = process.env.model;
 const provider = process.env.provider;

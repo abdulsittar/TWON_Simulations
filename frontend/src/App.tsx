@@ -1,6 +1,7 @@
 // import React from 'react';
 import { createBrowserRouter, RouterProvider, Outlet, ScrollRestoration, } from 'react-router-dom';
 import Home from './pages/Home';
+import Home2 from './pages/Home2';
 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -41,10 +42,14 @@ function App() {
       children: [
         {
           path: '/',
+          element: <Home2 />,
+        },
+        {
+          path: '/Simulations',
           element: <Home />,
         },
         {
-          path: '/logs',
+          path: '/View_Data',
           element: <Logs />,
         },
       ],

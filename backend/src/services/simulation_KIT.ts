@@ -379,19 +379,18 @@ export class SimulationService {
       //await performAgentAction(agents[i], 0);
     //}
     
-    //for (const agent of agents) {
+    for (const agent of agents) {
       
-     // if (agent.activateAgent(currentTime, agent.loggedIn)) {
-    //    await performAgentAction(agent, 0);
-    //  }
-    //}
+      if (agent.activateAgent(currentTime, agent.loggedIn)) {
+        await performAgentAction(agent, 0);
+      }
+    }
     
-      for (let j = 0; j < 30; j++) {
-        agents = await getAllAgents();
-        const passiveCount_1 = Math.floor(totalAgents * 0.1); // 20% post
-        const passiveCount_2 = Math.floor(totalAgents * 0.2); // 20% like
-        const passiveCount_3 = Math.floor(totalAgents * 0.2); // 20% dislike
-        const semiActiveCount = Math.floor(totalAgents * 0.5); // 30% Comment 
+    for (let i = 0; i < 5; i++) {
+     agents = await getAllAgents();
+    const passiveCount_1 = Math.floor(totalAgents * 0.2); // 20% Like
+    const passiveCount_2 = Math.floor(totalAgents * 0.2); // 20% Like
+    const semiActiveCount = Math.floor(totalAgents * 0.3); // 30% Comment 
     
     let currentAgent = 0;
     for (let i = 0; i < totalAgents; i++) {
@@ -401,68 +400,17 @@ export class SimulationService {
         responseLogger.info(`randomNumber  ${randomNumber}`);
       let actionType: number;
 
-      if (randomNumber < 10) {
-        actionType = 0; // post
-        await performAgentAction(agents[i], actionType);
-        
-      } else if (randomNumber < 30) {
-        actionType = 2; // like
-        await performAgentAction(agents[i], actionType);
-        
-      } else if (randomNumber < 50) {
-        actionType = 3; // dislike
-        await performAgentAction(agents[i], actionType);
-      
-      } else {
+      if (i < passiveCount_1) {
+        actionType = 3; // Like
+      } else if (i < passiveCount_1 + passiveCount_2) {
+        actionType = 2;
+      } else if (i < passiveCount_1 + passiveCount_2 + semiActiveCount) {
         actionType = 1; // Comment
-        await performAgentAction(agents[i], actionType);
-        
-        /*try {
-          const userIds = await User.find().select("_id"); // Fetch only _id fields
-          console.log(userIds);
-          let user_ids = userIds.map(user => user._id.toString());
-          user_ids = shuffleArray(user_ids);
-          currentAgent = (i + 1) % totalAgents;
-          
-          const { agentFeatures, actionLabels, validUserIds } = await fetchAgentFeaturesAndLabels(user_ids, currentAgent);
-        if (agentFeatures.length > 0 && actionLabels.length > 0) {
-          try {
-            console.log(`agentFeatures for Agent  :`, agentFeatures);
-            console.log(`actionLabels for Agent :`, actionLabels);
-            responseLogger.info(`agentFeatures.length && actionLabels.length and result is`);
-            
-
-            const probabilities = await SimulationService.getAgentActionProbabilities(agentFeatures, actionLabels);
-            responseLogger.info(`Probabilities for Agent:`, probabilities);
-            //await updateWantToReplyForAllUsers(agents, probabilities);
-            await updateUserScores(validUserIds, probabilities);
-            const bestMatch = await getHighestLikelihoodPostAndUser(user_ids);
-            
-            const user_1 = await User.findOne({ _id: bestMatch?.userId });
-            const post_1 = await Post.findOne({_id: bestMatch?.postId });//.sort({ rank: -1 }).limit(1);
-            if (user_1 && post_1) {
-              // If user_1 is found, perform the action
-              await performAgentAction(user_1, actionType, post_1);
-              await setBestMatchProbabilityToZero([bestMatch?.userId as string]);
-            } else {
-              console.error(`User with ID ${bestMatch?.userId} not found.`);
-              responseLogger.info(`User with ID ${bestMatch?.userId} not found.`);
-            }
-          } catch (error) {
-            console.error(`Error calculating probabilities for Agent ${agents[i]._id}:`, error);
-            responseLogger.info(`Error calculating probabilities for Agent ${agents[i]._id}:`, error);
-          }
-          
-          
-        }else{
-          responseLogger.info(`agentFeatures.length > 0 && actionLabels.length > 0 and result is ${agentFeatures.length} and ${actionLabels.length}.`);
-        }
-      } catch (error) {
-          console.error("Error fetching user IDs:", error);
-        }*/
+      } else {
+        actionType = 0; // Post
       }
       
-      
+      await performAgentAction(agents[i], actionType);
       //emitChartData(this.io, agents);
     }
   }

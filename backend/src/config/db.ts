@@ -3,10 +3,23 @@ import { User } from "../models/user/user.model";
 import { TimeBudget } from '../models/user/timeBudget.model';
 import { ENV } from "./env";
 
-const connectDB = async () => {
+const connectDB = async (databaseName?: string) => {
     try {
-      await mongoose.connect(ENV.MONGO_URI);
-      console.log(ENV.MONGO_URI);
+    
+      if (mongoose.connection.readyState !== 0) {  // If the connection is not disconnected
+        await mongoose.disconnect();  // Disconnect the previous connection
+      }
+    
+      let mongoUri = ENV.MONGO_URI;
+  
+    // If a database name is provided, use it, otherwise use the default URI from ENV
+    if (databaseName && databaseName !== "") {
+      mongoUri = ENV.MONGO_URI.replace(/\/([^/?]+)(?=\?)/, `/${databaseName}`);
+    }
+    console.log(databaseName)
+    console.log(mongoUri)
+      await mongoose.connect(mongoUri);
+      //console.log(ENV.MONGO_URI);
       console.log("MongoDB connected");
   
       // Function to delete all users and time budgets

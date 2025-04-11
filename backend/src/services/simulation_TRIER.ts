@@ -372,9 +372,6 @@ static async getAgentActionProbabilities(agentFeatures: string[][], actionLabels
   }
 }
 
-
-
-
   static async runSimulation(currentTime: number): Promise<void> {
     let agents = await getAllAgents();
     if (agents.length === 0) return;
@@ -403,7 +400,7 @@ static async getAgentActionProbabilities(agentFeatures: string[][], actionLabels
       const randomNumber = Math.floor(Math.random() * 100) + 1;
       responseLogger.info(`randomNumber  ${randomNumber}`);
       
-      if (randomNumber <= 20) {
+      if (randomNumber <= 0) {
         actionType = 0; // post
         await performAgentAction(agents[i], actionType);
         

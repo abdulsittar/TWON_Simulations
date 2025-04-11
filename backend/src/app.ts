@@ -53,11 +53,17 @@ const corsOptions = {
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
 app.post("/users/create", UserController.createUser);
 app.post("/users/getAllUsers", UserController.getAllUsers);
+app.get('/users/listDatabases', UserController.listAllDatabases);
 app.post("/users/get_totalTime", UserController.get_totalTime);
 app.post("/users/get_replenishTime", UserController.get_replenishTime);
 app.post("/users/get_usedTime", UserController.get_usedTime);
 app.post("/users/latestAnalytics", UserController.latestAnalytics);
 app.post("/users/latestUserActions", UserController.latestUserActions);
+app.post("/users/connect", UserController.connectToDatabase);
+
+app.post("/users/getUsersData", UserController.getUsersData);
+app.post("/users/getComments", UserController.getComments);
+app.post("/users/getPosts", UserController.getPosts);
 
 app.post("/posts/createPost", PostController.createPost);
 app.post("/posts/get_postsPerUser", PostController.get_postsPerUser);

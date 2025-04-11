@@ -1,34 +1,31 @@
-import React from 'react';
+//import React from 'react';
 import { GridColDef } from '@mui/x-data-grid';
 import DataTable from '../components/DataTable';
 import { useQuery } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
-import { fetchLogs } from '../api/ApiCollection';
+//import toast from 'react-hot-toast';
+//import { fetchLogs } from '../api/ApiCollection';
+//, getComments 
+import { getUsersData, getComments, getPosts  } from '../api/ApiCollection'; 
 
+
+ 
 const Logs = () => {
-  const { isLoading, isError, isSuccess, data } = useQuery({
-    queryKey: ['all-logs'],
-    queryFn: fetchLogs,
-  });
+  const users               = useQuery({ queryKey: ['all-users'], queryFn: getUsersData, }); 
+  
+  const posts = useQuery({ queryKey: ['all-posts'], queryFn: getPosts, });
+  
+  const comments = useQuery({ queryKey: ['all-comments'], queryFn: getComments, });
 
-  const columns: GridColDef[] = [
+  const columns1: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 90 },
     {
-      field: 'firstName',
-      headerName: 'Name',
+      field: '_id',
+      headerName: 'userId',
       minWidth: 220,
       flex: 1,
       renderCell: (params) => {
         return (
           <div className="flex gap-3 py-[6px] items-center">
-            <div className="avatar">
-              <div className="w-6 xl:w-9 rounded-full">
-                <img
-                  src={params.row.img || '/Portrait_Placeholder.png'}
-                  alt="user-picture"
-                />
-              </div>
-            </div>
             <span className="mb-0 pb-0 leading-none">
               {params.row.firstName} {params.row.lastName}
             </span>
@@ -37,64 +34,110 @@ const Logs = () => {
       },
     },
     {
-      field: 'role',
-      headerName: 'Role',
-      minWidth: 100,
-      type: 'string',
+      field: 'username',
+      headerName: 'username',
+      minWidth: 80,
       flex: 1,
+      renderCell: (params) => {
+        return (
+          <div className="flex gap-3 py-[6px] items-center">
+            <span className="mb-0 pb-0 leading-none">
+              {params.row.username}
+            </span>
+          </div>
+        );
+      },
     },
     {
       field: 'email',
       type: 'string',
       headerName: 'Email',
-      minWidth: 200,
+      minWidth: 150,
       flex: 1,
     },
     {
-      field: 'date',
-      headerName: 'Date',
-      minWidth: 120,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'time',
-      headerName: 'Time',
+      field: 'party',
+      headerName: 'party',
       minWidth: 100,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'action',
-      headerName: 'Action',
-      minWidth: 350,
       type: 'string',
       flex: 1,
       renderCell: (params) => {
         return (
           <div className="flex whitespace-normal">
-            {params.row.action}
+            {params.row.username}
           </div>
         );
       },
     },
   ];
+  
+  const columns2: GridColDef[] = [
+    { field: '_id', headerName: 'ID', width: 90 },
+    {
+      field: 'userId',
+      headerName: 'userId',
+      minWidth: 220,
+      flex: 1,
+      renderCell: (params) => {
+        return (
+          <div className="flex gap-3 py-[6px] items-center">
+            <span className="mb-0 pb-0 leading-none">
+              {params.row.userId}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      field: 'desc',
+      type: 'string',
+      headerName: 'Post',
+      minWidth: 200,
+      flex: 1,
+    },
+  ];
 
-  React.useEffect(() => {
-    if (isLoading) {
-      toast.loading('Loading...', { id: 'promiseLogs' });
-    }
-    if (isError) {
-      toast.error('Error while getting the data!', {
-        id: 'promiseLogs',
-      });
-    }
-    if (isSuccess) {
-      toast.success('Got the data successfully!', {
-        id: 'promiseLogs',
-      });
-    }
-  }, [isError, isLoading, isSuccess]);
+  const columns3: GridColDef[] = [
+    { field: '_id', headerName: 'ID', width: 90 },
+    {
+      field: 'postId',
+      headerName: 'postId',
+      minWidth: 220,
+      flex: 1,
+      renderCell: (params) => {
+        return (
+          <div className="flex gap-3 py-[6px] items-center">
+            <span className="mb-0 pb-0 leading-none">
+              {params.row.postId}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      field: 'username',
+      headerName: 'username',
+      minWidth: 220,
+      flex: 1,
+      renderCell: (params) => {
+        return (
+          <div className="flex gap-3 py-[6px] items-center">
+            <span className="mb-0 pb-0 leading-none">
+              {params.row.username}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      field: 'body',
+      type: 'string',
+      headerName: 'body',
+      minWidth: 200,
+      flex: 1,
+    },
+  ];
+ 
   return (
     // screen
     <div className="w-full p-0 m-0">
@@ -104,45 +147,81 @@ const Logs = () => {
         <div className="w-full flex justify-between mb-5">
           <div className="flex gap-1 justify-start flex-col items-start">
             <h2 className="font-bold text-2xl xl:text-4xl mt-0 pt-0 text-base-content dark:text-neutral-200">
-              Logs
+              Agents
             </h2>
-            {data && data.length > 0 && (
+            {users.data && users.data.length > 0 && (
               <span className="text-neutral dark:text-neutral-content font-medium text-base">
-                {data.length} Logs Found
+                {users.data.length} agents
+              </span>
+            )}
+          </div>
+        </div>
+         
+          {users.data && users.data.length > 0 && (  <DataTable
+              slug="logs"
+              columns={columns1}
+              rows={users.data}
+              getRowId={(row) => row._id || row.id}
+              includeActionColumn={false}
+            />
+          )}
+           </div>
+      
+      {/* container */}
+      <div className="w-full flex flex-col items-stretch gap-3">
+        {/* block 1 */}
+        <div className="w-full flex justify-between mb-5">
+          <div className="flex gap-1 justify-start flex-col items-start">
+            <h2 className="font-bold text-2xl xl:text-4xl mt-0 pt-0 text-base-content dark:text-neutral-200">
+              Posts
+            </h2>
+            {posts.data && posts.data.length > 0 && (
+              <span className="text-neutral dark:text-neutral-content font-medium text-base">
+                {posts.data.length} posts
               </span>
             )}
           </div>
         </div>
 
-        {/* table */}
-        {isLoading ? (
-          <DataTable
-            slug="logs"
-            columns={columns}
-            rows={[]}
-            includeActionColumn={false}
-          />
-        ) : isSuccess ? (
-          <DataTable
-            slug="logs"
-            columns={columns}
-            rows={data}
-            includeActionColumn={false}
-          />
-        ) : (
-          <>
-            <DataTable
+        
+        {posts.data && posts.data.length > 0 && (  <DataTable
               slug="logs"
-              columns={columns}
-              rows={[]}
+              columns={columns2}
+              rows={posts.data}
               includeActionColumn={false}
             />
-            <div className="w-full flex justify-center">
-              Error while getting the data!
-            </div>
-          </>
-        )}
-      </div>
+          )}
+           </div>
+      
+      
+      
+      
+      {/* container */}
+      <div className="w-full flex flex-col items-stretch gap-3">
+        {/* block 1 */}
+        <div className="w-full flex justify-between mb-5">
+          <div className="flex gap-1 justify-start flex-col items-start">
+            <h2 className="font-bold text-2xl xl:text-4xl mt-0 pt-0 text-base-content dark:text-neutral-200">
+              Comments
+            </h2>
+            {comments.data && comments.data.length > 0 && (
+              <span className="text-neutral dark:text-neutral-content font-medium text-base">
+                {comments.data.length} comments
+              </span>
+            )}
+          </div>
+        </div>
+
+       
+            {comments.data && comments.data.length > 0 && (  <DataTable
+              slug="logs"
+              columns={columns3}
+              rows={comments.data}
+              includeActionColumn={false}
+              getRowId={(row) => row._id}
+            />
+          )}
+           </div>
     </div>
   );
 };
