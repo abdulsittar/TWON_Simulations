@@ -103,7 +103,7 @@ const processComments = (comments: IComment[]): Array<{ id: string; likes: Date[
           commentsDislikes, // Now this is a Date[] (filtered)
         };
       }); 
-      let mode: 'random' | 'chronological' | 'ranked' = 'ranked'; // or dynamically assigned value
+      let mode : 'random' | 'chronological' | 'ranked' = 'ranked'; // or dynamically assigned value
       const rankingPayload = {
         items,
         weights: { likes: 1.0, dislikes: 1.0, reposts: 1.0, comments: 1.0, commentsLikes: 1.0, commentsDislikes: 1.0 },
@@ -114,7 +114,7 @@ const processComments = (comments: IComment[]): Array<{ id: string; likes: Date[
         mode: mode, // Dynamically assigned, but still one of the allowed values
       };
   
-      const start = performance.now();
+    const start = performance.now();
     const ranker = new Ranker(); 
     const response = ranker.rank(rankingPayload);
     

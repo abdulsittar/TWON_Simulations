@@ -64,11 +64,11 @@ const isTestEnvironment = process.env.NODE_ENV === 'test';
 let k: string | { apiKey: string };
 //let together: Together; // Define the type of together
 
-if (isTestEnvironment) {
-  k = apiKey; // Pass as string
-} else {
-  k = { apiKey }; // Pass as object
-}
+//if (isTestEnvironment) {
+  //k = apiKey; // Pass as string
+//} else {
+ // k = { apiKey }; // Pass as object
+//}
 
 // Check type and pass the correct value to the constructor
 /*if (typeof k === 'string') {
@@ -77,8 +77,14 @@ if (isTestEnvironment) {
   together = new Together(k.apiKey); // Pass string from k.apiKey if k is an object
 }*/
 
-//const together = new Together({ apiKey });
-const together = new Together(apiKey); 
+
+
+const together = new Together({ apiKey });
+
+
+
+
+//const together = new Together(apiKey); 
  
 const model = process.env.model;
 const provider = process.env.provider;
@@ -126,8 +132,19 @@ export const performAgentAction = async (agent: IUser, actionType: number, post?
       //responseLogger.info(`agent_Reply_Comment_Loop --- Execution time: ${(endTime - startTime) / 1000} seconds`); 
       break;
       
-    case 2: startTime = performance.now(); postId = await agent_Like_Post_Loop(agent); actionName = "like"; endTime = performance.now(); responseLogger.info(`agent_Like_Post_Loop --- Execution time: ${(endTime - startTime) / 1000} seconds`); break;
-    case 3: startTime = performance.now(); postId = await agent_Dislike_Post_Loop(agent); actionName = "dislike"; endTime = performance.now(); responseLogger.info(`agent_Dislike_Post_Loop --- Execution time: ${(endTime - startTime) / 1000} seconds`); break;
+    case 2: startTime = performance.now(); 
+      postId = await agent_Like_Post_Loop(agent); 
+      actionName = "like"; 
+      endTime = performance.now(); 
+      responseLogger.info(`agent_Like_Post_Loop --- Execution time: ${(endTime - startTime) / 1000} seconds`); 
+      break;
+    case 3: 
+      startTime = performance.now(); 
+      postId = await agent_Dislike_Post_Loop(agent); 
+      actionName = "dislike"; 
+      endTime = performance.now(); 
+      responseLogger.info(`agent_Dislike_Post_Loop --- Execution time: ${(endTime - startTime) / 1000} seconds`); 
+      break;
     default: console.error("Invalid action type");
   }
   //await saveUserAction(agent.username, actionName, postId);
@@ -306,7 +323,7 @@ export async function agent_Generate_Post_Loop(randomAgent: IUser) {
   // Like a Post
   export async function agent_Like_Post_Loop(randomAgent: IUser) {
     try {
-      //responseLogger.info("agent_Like_Post_Loop");
+      responseLogger.info("agent_Like_Post_Loop");
   
       const agnts = await User.find({ username: randomAgent.username });
       const agnt = agnts[0];
@@ -337,15 +354,23 @@ export async function agent_Generate_Post_Loop(randomAgent: IUser) {
         const messages = [{ role: "user", content: prompt }];
         const params = { model: "mistralai/Mistral-7B-Instruct-v0.1", messages, temperature: 0.7, max_tokens: 100 };
   
-        const togetherResponse = await together.chat.completions.create({
-          messages: [{"role": "system", "content": persona}, {"role": "user", "content": prompt}],
-          model: replying_model,
-      });
+        //const togetherResponse = await together.chat.completions.create({
+        //  messages: [{"role": "system", "content": persona}, {"role": "user", "content": prompt}],
+       //   model: replying_model,
+     // });
+      
+      const randomNumber = Math.floor(Math.random() * 2);
   
         //const togetherResponse = await together.chat.completions.create({params});
-        const decision = togetherResponse.choices?.[0]?.message?.content?.trim();
+        //const decision = togetherResponse.choices?.[0]?.message?.content?.trim();
+  
+        let decision;
+        if (randomNumber == 0) {decision = "true"}
+        else if (randomNumber) {decision = "false"}
+  
   
         responseLogger.info({ Like: decision});
+        responseLogger.info(`Like Decision: ${decision}`);
   
         responseLogger.info({ 
           agentId: agnt.id,
@@ -356,7 +381,7 @@ export async function agent_Generate_Post_Loop(randomAgent: IUser) {
           model: replying_model,
           Like: decision
       });
-        //responseLogger.info(`Like Decision: ${decision}`);
+        responseLogger.info(`Like Decision: ${decision}`);
   
         if (decision === "true") {
           await likeAPost(agnt, agnt._id as unknown as string, post._id as string);
@@ -420,15 +445,19 @@ export async function agent_Generate_Post_Loop(randomAgent: IUser) {
         //const messages = [{ role: "user", content: prompt }];
         //const params = { model: "mistralai/Mistral-7B-Instruct-v0.1", messages, temperature: 0.7, max_tokens: 100 };
         
-        const togetherResponse = await together.chat.completions.create({
-          messages: [{"role": "system", "content": persona}, {"role": "user", "content": prompt}],
-          model: replying_model,
-      });
-        
-        //const togetherResponse = await together.chat.completions.create({params});
-        const decision = togetherResponse.choices?.[0]?.message?.content?.trim();
+        //const togetherResponse = await together.chat.completions.create({
+        //  messages: [{"role": "system", "content": persona}, {"role": "user", "content": prompt}],
+       //   model: replying_model,
+     // });
+      
+      const randomNumber = Math.floor(Math.random() * 2);
   
-        responseLogger.info({ Dislike: decision});
+      //const togetherResponse = await together.chat.completions.create({params});
+      //const decision = togetherResponse.choices?.[0]?.message?.content?.trim();
+
+      let decision;
+      if (randomNumber == 0) {decision = "true"}
+      else if (randomNumber) {decision = "false"}
   
         responseLogger.info({ 
           agentId: agnt.id,

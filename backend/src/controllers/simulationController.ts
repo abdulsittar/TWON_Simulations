@@ -1,8 +1,8 @@
 // src/controllers/simulationController.ts
 
 import { Request, Response } from "express";
-//import { SimulationService } from "../services/simulation_KIT";
-import { SimulationService } from "../services/simulation_TRIER";
+import { SimulationService } from "../services/simulation_KIT";
+//import { SimulationService } from "../services/simulation_TRIER";
 import app from "../app";
 import http from 'http';
 import { Server } from 'socket.io';
