@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "5000:5000" 
+    depends_on:
+      - mongodb
+    networks:
+      - simulation-net
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - simulation-net
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - simulation-net
+
+volumes:
+  mongodb-data:
+
+networks:
+  simulation-net:
+    driver: bridge
