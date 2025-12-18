@@ -168,8 +168,6 @@ const Home = () => {
     }
   };
 
-
-
 const handleDatabaseChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
 
   const databaseName = event.target.value || ""; // If no database is selected, send an empty string
