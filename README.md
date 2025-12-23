@@ -314,10 +314,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- Thanks to all contributors who participate in this project
-- Built with TypeScript and React
-- Powered by large language models for agent simulation
+This work is supported by **TWON** (project number **101095095**), a research project funded by the European Union under the **Horizon Europe** framework (HORIZON-CL2-2022-DEMOCRACY-01, Topic 07).
 
----
-
-For more information or support, please open an issue on the GitHub repository.
+More information about the project is available on the official website:
+👉 https://www.twon-project.eu/
