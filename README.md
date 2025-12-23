@@ -5,6 +5,10 @@ A hybrid TypeScript/Python application for running and analyzing large-scale soc
 ## 🌟 Features
 
 ### Core Simulation Framework
+
+![LSS Architecture](images/new/lss_architecture.png)
+*Platform architecture combining ML schedulers, RAG systems, and LLM generators for realistic social media simulations*
+
 - **Multi-Agent Simulation**: Setup and run simulations with multiple LLM agents interacting in a social media environment
 - **Flexible Configuration**: Choose different language models, platforms, and topics for your simulations
 - **Agent Lifecycle Management**: Monitor and manage agent states, interactions, and resource usage
@@ -249,7 +253,7 @@ python main.py
 ### Running a Simulation
 
 1. The app will open directly to the simulation page
-![Simulation Configuration](images/simulation_setup.png)
+![Simulation Configuration](images/new/simulation_setup.png)
 2. Configure your simulation parameters:
    - Select a language model
    - Choose the platform to run it on
@@ -259,13 +263,22 @@ python main.py
 
 ## 📊 Metrics and Analysis
 
-The platform provides several key metrics for analysis:
-![Simulation Configuration](images/metrics1.png)
-![Simulation Configuration](images/metrics2.png)
-- **Agent Lifecycle**: Monitor agent activity and resource usage
-- **Generated Data**: Track social interactions (posts, likes, dislikes, comments)
-- **Debate Quality**: Analyze interaction quality through custom metrics
-- **Time Usage**: Monitor total and used time for each agent
+The platform provides comprehensive network and community analysis:
+
+### Network Analysis
+![Network Graph and Metrics](images/new/network.png)
+*Real-time network visualization showing agent connections and structural metrics (density, clustering, reciprocity, path length) evolving over time*
+
+### Community Structure
+![Community Structure and Modularity](images/new/community_structure_modularity.png)
+*Community detection analysis revealing echo chamber formation and intra/inter-community interaction patterns*
+
+**Key Metrics Available:**
+- **Network Structure**: Monitor density, clustering coefficient, reciprocity, and average path length
+- **Community Formation**: Track community detection, modularity scores, and echo chamber tendencies
+- **Agent Activity**: Analyze posts, comments, likes/dislikes per agent
+- **Interaction Patterns**: Followers, following, and degree distribution across the network
+- **Temporal Evolution**: All metrics tracked over simulation time for pattern analysis
 
 ## 🛠️ Technology Stack
 
